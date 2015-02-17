@@ -1,4 +1,63 @@
-# 25.1.1.4  The *ReverseIterable* Interface
+# The *ReverseIterable* Interface
+
+Spec proposal for ECMA-262
+
+**Stage:** Strawman (0)
+
+**Author:** Lee Byron
+
+Iterating through collections in reverse is a pretty common operation in
+application logic. In imperative code, we see these two patterns all the time:
+
+```js
+// Forward iteration
+for (var i = 0; i < a.length; i++) {
+  var v = a[i];
+  doSomething(v, i);
+}
+
+// Reverse iteration
+for (var i = a.length - 1; i >= 0; i--) {
+  var v = a[i];
+  doSomething(v, i);
+}
+```
+
+Iterators in ES2015 are a valuable higher order abstraction which helps capture
+forward iteration. The `for of` loop can simplify the imperative forward
+iteration to become:
+
+```js
+for (var [i, v] of a.entries()) {
+  doSomething(v, i);
+}
+```
+
+We're missing an equivalent abstraction to capture the reverse iteration. In
+this proposal, it's suggested that this can be written as:
+
+```js
+for (var [i, v] of a.entries().reverse()) {
+  doSomething(v, i);
+}
+```
+
+This syntax has the benefit of not introducing new syntactical concepts but
+instead just adds a few function properties to iterator prototypes.
+
+In addition to the pattern of using `reverse()`, this proposal also suggests the
+addition of a *ReverseIterable* interface which any object can implement by
+adding a function to the `Symbol.reverseIterator` property. Capturing this in an
+interface allows arbitrary code to detect that a particular object is reverse
+iterable and use that to it's advantage.
+
+
+
+# Additions to Spec
+
+
+## The *ReverseIterable* Interface
+> This interface is new.
 
 The *ReverseIterable* interface includes the following property:
 
@@ -8,6 +67,189 @@ The *ReverseIterable* interface includes the following property:
 NOTE  An object should implement the *ReverseIterable* interface only when it
 also implements the *Iterable* interface.
 
+
+
+## Properties of the Symbol Constructor
+
+### Symbol.reverseIterator
+> This property is new, added in 19.4.2
+
+The initial value of Symbol.reverseIterator is the well known symbol @@reverseIterator (Table 1).
+
+This property has the attributes { [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]: false }
+
+
+
+## Properties of the Array Prototype Object
+
+### Array.prototype \[ @@reverseIterator ] ( )
+> This property is new, added in 22.1.3
+
+  1. Let O be the result of calling ToObject with the this value as its argument.
+  2. ReturnIfAbrupt(O).
+  3. Return CreateArrayReverseIterator(O, "value").
+
+
+
+## Array Iterator Objects
+
+### The %ArrayReverseIteratorPrototype% Object
+
+#### ArrayIteratorPrototype.reverse ( )
+> This property is new, added in 22.1.5.2
+
+  1. Let *O* be the **this** value.
+  2. If Type(*O*) is not Object, throw a **TypeError** exception.
+  3. If *O* does not have all of the internal slots of an Array Iterator Instance, throw a **TypeError** exception.
+  4. Let *a* be the value of the [[IteratedObject]] internal slot of *O*.
+  5. Let *index* be the value of the [[ArrayIteratorNextIndex]] internal slot of *O*.
+  6. If *index* !== 0, then throw a **TypeError** exception.
+  7. Let *itemKind* be the value of the [[ArrayIterationKind]] internal slot of *O*.
+  8. Return CreateArrayReverseIterator(*a*, *itemKind*).
+
+
+#### ArrayIteratorPrototype \[ @@reverseIterator ] ( )
+> This property is new, added in 22.1.5.2
+
+The initial value of the @@reverseIterator property is the same function as
+the initial value of the **ArrayIteratorPrototype.reverse** property.
+
+
+
+## Array Reverse Iterator Objects
+> This section is new, added after 22.1.5
+
+An Array Reverse Iterator is an object, that represents a specific reverse
+iteration over some specific Array instance object. There is not a named
+constructor for Array Reverse Iterator objects. Instead, Array Reverse
+Iterator objects are created by calling **reverse** on Array Iterator objects.
+
+
+### CreateArrayReverseIterator Abstract Operation
+
+  1. Assert: Type(*array*) is Object
+  2. Let *iterator* be ObjectCreate(%ArrayIteratorPrototype%, ([[IteratedObject]], [[ArrayReverseIteratorNextIndex]], [[ArrayIterationKind]])).
+  3. Set *iterator’s* [[IteratedObject]] internal slot to *array*.
+  4. Let *lenValue* be Get(*array*, "length").
+  5. Let *len* be ToLength(*lenValue*).
+  6. ReturnIfAbrupt(*len*).
+  7. Set *iterator’s* [[ArrayReverseIteratorNextIndex]] internal slot to *len*-1.
+  8. Set *iterator’s* [[ArrayIteratorKind]] internal slot to *kind*.
+  9. Return *iterator*.
+
+
+### The %ArrayReverseIteratorPrototype% Object
+
+All Array Reverse Iterator Objects inherit properties from the
+%ArrayReverseIteratorPrototype% intrinsic object. The
+%ArrayReverseIteratorPrototype% object is an ordinary object and its
+[[Prototype]] internal slot is the %IteratorPrototype% intrinsic object
+(25.1.2). In addition, %ArrayReverseIteratorPrototype% has the following
+ properties:
+
+
+#### %ArrayReverseIteratorPrototype%.next ( )
+
+  1. Let *O* be the this value.
+  2. If Type(*O*) is not Object, throw a **TypeError** exception.
+  3. If *O* does not have all of the internal slots of an Array Reverse Iterator Instance, throw a **TypeError** exception.
+  4. Let *a* be the value of the [[IteratedObject]] internal slot of *O*.
+  5. If *a* is **undefined**, then return CreateIterResult*O*bject(**undefined**, **true**).
+  6. Let *index* be the value of the [[ArrayReverseIteratorNextIndex]] internal slot of *O*.
+  7. Let *itemKind* be the value of the [[ArrayIterationKind]] internal slot of *O*.
+  8. If *index* < 0, then
+  9. Set the value of the [[ArrayReverseIteratorNextIndex]] internal slot of *O* to *index*-1.
+  10. If *itemKind* is **"key"**, then let *result* be *index*.
+  11. Else,
+    a. Let *elementKey* be ToString(*index*).
+    b. Let *elementValue* be Get(*a*, *elementKey*).
+    c. ReturnIfAbrupt(*elementValue*).
+  12. If *itemKind* is **"value"**, then let *result* be *elementValue*.
+  13. Else,
+      a. Assert *itemKind* is **"key+value"**,.
+      b. Let *result* be ArrayCreate(2).
+      c. Assert: *result* is a new, well-formed Array object so the following operations will never fail.
+      d. Call CreateDataProperty(*result*, **"0"**, *index*).
+      e. Call CreateDataProperty(*result*, **"1"**, *elementValue*).
+  14. Return CreateIterResultObject(*result*, **false**).
+
+
+#### %ArrayReverseIteratorPrototype%.reverse ( )
+
+  1. Let *O* be the **this** value.
+  2. If Type(*O*) is not Object, throw a **TypeError** exception.
+  3. If *O* does not have all of the internal slots of an Array Reverse Iterator Instance, throw a **TypeError** exception.
+  4. Let *a* be the value of the [[IteratedObject]] internal slot of *O*.
+  5. Let *index* be the value of the [[ArrayReverseIteratorNextIndex]] internal slot of *O*.
+  6. Let *lenValue* be Get(a, "length").
+  7. Let *len* be ToLength(*lenValue*).
+  8. ReturnIfAbrupt(*len*).
+  9. If *index* !== *len*-1, then throw a **TypeError** exception.
+  10. Let *itemKind* be the value of the [[ArrayIterationKind]] internal slot of *O*.
+  11. Return CreateArrayReverseIterator(*a*, *itemKind*).
+
+
+#### ArrayReverseIteratorPrototype \[ @@reverseIterator ] ( )
+
+The initial value of the @@reverseIterator property is the same function as the
+initial value of the **ArrayReverseIteratorPrototype.reverse** property.
+
+
+#### %ArrayIteratorPrototype% \[ @@toStringTag ]
+
+The initial value of the @@toStringTag property is the string value
+**"Array Reverse Iterator"**.
+
+This property has the attributes { [[Writable]]: **false**, [[Enumerable]]: **false**, [[Configurable]]: **true** }.
+
+
+### Properties of Array Reverse Iterator
+
+Array Reverse Iterator instances are ordinary objects that inherit properties
+from the %ArrayReverseIteratorPrototype% intrinsic object. Array Reverse
+Iterator instances are initially created with the internal slots listed in the
+following table.
+
+| Internal Slot                     | Description |
+| [[IteratedObject]]                | The object whose array elements are being iterated.
+| [[ArrayReverseIteratorNextIndex]] | The integer index of the next array index to be examined by this iteration.
+| [[ArrayIterationKind]]            | A string value that identifies what is to be returned for each element of the iteration. The possible values are: **"key"**, **"value"**, **"key+value"**.
+
+
+
+## String Reverse Iterator Objects
+> This section is new
+
+*TK*
+
+
+## Map Reverse Iterator Objects
+> This section is new
+
+*TK*
+
+
+## Set Reverse Iterator Objects
+> This section is new
+
+*TK*
+
+
+
+
+
+
+
+Not sure we need these yet...
+
+
+### CheckReverseIterable ( obj )
+
+The abstract operation CheckReverseIterable with argument *obj* performs the
+following steps:
+
+ ￼1. If Type(*obj*) is not Object, then return **undefined**.
+  2. Return Get(*obj*, @@reverseIterator).
 
 
 

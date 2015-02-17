@@ -195,10 +195,15 @@ Array.prototype[Symbol.reverseIterator] = function () {
 ArrayIteratorPrototype.reverse = function () {
   // Let *O* be the **this** value.
   var O = this;
-  // If *O* does not have a [[IteratedObject]] internal slot, then throw a **TypeError** exception.
-  if (!O.hasOwnProperty('[[IteratedObject]]')) {
-    throw new TypeError('Missing array');
+
+  // 2. If Type(O) is not Object, throw a TypeError exception.
+  if (typeof O !== 'object') {
+    throw new TypeError();
   }
+
+  // 3. If O does not have all of the internal slots of an Array Iterator Instance (22.1.5.3), throw a
+  // TypeError exception.
+
   // Let *a* be the value of the [[IteratedObject]] internal slot of *O*.
   var a = O['[[IteratedObject]]'];
   // Let *index* be the value of the [[ArrayIteratorNextIndex]] internal slot of *O*.
@@ -284,7 +289,7 @@ ArrayReverseIteratorPrototype.next = function () {
     return CreateIterResultObject(undefined, true);
   }
 
-  // 6. Let index be the value of the [[ArrayIteratorNextIndex]] internal slot of O.
+  // 6. Let index be the value of the [[ArrayReverseIteratorNextIndex]] internal slot of O.
   var index = O['[[ArrayReveseIteratorNextIndex]]'];
 
   // 7. Let itemKind be the value of the [[ArrayIterationKind]] internal slot of O.
@@ -343,10 +348,13 @@ ArrayReverseIteratorPrototype.reverse = function () {
   // Let *O* be the **this** value.
   var O = this;
 
-  // If *O* does not have a [[IteratedObject]] internal slot, then throw a **TypeError** exception.
-  if (!O.hasOwnProperty('[[IteratedObject]]')) {
-    throw new TypeError('Missing array');
+    // 2. If Type(O) is not Object, throw a TypeError exception.
+  if (typeof O !== 'object') {
+    throw new TypeError();
   }
+
+  // 3. If O does not have all of the internal slots of an Array Iterator Instance (22.1.5.3), throw a
+  // TypeError exception.
 
   // Let *a* be the value of the [[IteratedObject]] internal slot of *O*.
   var a = O['[[IteratedObject]]'];
