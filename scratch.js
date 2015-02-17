@@ -177,8 +177,8 @@ Symbol.reverseIterator = Symbol('@@reverseIterator');
 // -- This property is new, added after 22.1.3.30
 
 
-// # Array.prototype [ @@reverseIterator ] ( )
-Array.prototype[Symbol.reverseIterator] = function () {
+// # Array.prototype.reversed ( )
+Array.prototype.reversed = function () {
   // 1. Let O be the result of calling ToObject with the this value as its argument.
   // 2. ReturnIfAbrupt(O).
   var O = Object(this);
@@ -188,11 +188,15 @@ Array.prototype[Symbol.reverseIterator] = function () {
 };
 
 
+// # Array.prototype [ @@reverseIterator ] ( )
+Array.prototype[Symbol.reverseIterator] = Array.prototype.reversed;
+
+
 // -- These two properties are added to ArrayIteratorPrototype, 22.1.5.2
 
 
-// # ArrayIteratorPrototype.reverse ( )
-ArrayIteratorPrototype.reverse = function () {
+// # ArrayIteratorPrototype.reversed ( )
+ArrayIteratorPrototype.reversed = function () {
   // Let *O* be the **this** value.
   var O = this;
 
@@ -221,8 +225,8 @@ ArrayIteratorPrototype.reverse = function () {
 
 // # ArrayIteratorPrototype [ @@reverseIterator ] ( )
 // The initial value of the @@reverseIterator property is the same function as
-// the initial value of the **ArrayIteratorPrototype.reverse** property.
-ArrayIteratorPrototype[Symbol.reverseIterator] = ArrayIteratorPrototype.reverse;
+// the initial value of the **ArrayIteratorPrototype.reversed** property.
+ArrayIteratorPrototype[Symbol.reverseIterator] = ArrayIteratorPrototype.reversed;
 
 
 // -- This section is new, added after 22.1.5
@@ -343,8 +347,8 @@ ArrayReverseIteratorPrototype.next = function () {
 };
 
 
-// # %ArrayReverseIteratorPrototype%.reverse ( )
-ArrayReverseIteratorPrototype.reverse = function () {
+// # %ArrayReverseIteratorPrototype%.reversed ( )
+ArrayReverseIteratorPrototype.reversed = function () {
   // Let *O* be the **this** value.
   var O = this;
 
@@ -382,9 +386,9 @@ ArrayReverseIteratorPrototype.reverse = function () {
 
 // # ArrayReverseIteratorPrototype [ @@reverseIterator ] ( )
 // The initial value of the @@reverseIterator property is the same function as
-// the initial value of the **ArrayReverseIteratorPrototype.reverse** property.
+// the initial value of the **ArrayReverseIteratorPrototype.reversed** property.
 ArrayReverseIteratorPrototype[Symbol.reverseIterator] =
-  ArrayReverseIteratorPrototype.reverse;
+  ArrayReverseIteratorPrototype.reversed;
 
 
 
@@ -404,7 +408,15 @@ ArrayReverseIteratorPrototype[Symbol.reverseIterator] =
 
 
 var array = ['A','B','C'];
-var revEntries = array.entries().reverse();
+
+var rev = array.reversed();
+console.log(rev.next());
+console.log(rev.next());
+console.log(rev.next());
+console.log(rev.next());
+console.log(rev.next());
+
+var revEntries = array.entries().reversed();
 console.log(revEntries.next());
 console.log(revEntries.next());
 console.log(revEntries.next());

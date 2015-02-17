@@ -37,15 +37,25 @@ We're missing an equivalent abstraction to capture the reverse iteration. In
 this proposal, it's suggested that this can be written as:
 
 ```js
-for (var [i, v] of a.entries().reverse()) {
+for (var [i, v] of a.entries().reversed()) {
   doSomething(v, i);
 }
 ```
 
+A simplest form, iterating through the default reverse iterator (values, in the
+case of Array) would be written as:
+
+```js
+for (var v of a.reversed()) {
+  doSomething(v);
+}
+```
+
+
 This syntax has the benefit of not introducing new syntactical concepts but
 instead just adds a few function properties to iterator prototypes.
 
-In addition to the pattern of using `reverse()`, this proposal also suggests the
+In addition to the pattern of using `reversed()`, this proposal also suggests the
 addition of a *ReverseIterable* interface which any object can implement by
 adding a function to the `Symbol.reverseIterator` property. Capturing this in an
 interface allows arbitrary code to detect that a particular object is reverse
@@ -82,12 +92,18 @@ This property has the attributes { [[Writable]]: false, [[Enumerable]]: false, [
 
 ## Properties of the Array Prototype Object
 
-### Array.prototype \[ @@reverseIterator ] ( )
+### Array.prototype.reversed ( )
 > This property is new, added in 22.1.3
 
   1. Let O be the result of calling ToObject with the this value as its argument.
   2. ReturnIfAbrupt(O).
   3. Return CreateArrayReverseIterator(O, "value").
+
+### Array.prototype \[ @@reverseIterator ] ( )
+> This property is new, added in 22.1.3
+
+The initial value of the @@reverseIterator property is the same function object
+as the initial value of the **Array.prototype.reversed** property.
 
 
 
@@ -95,7 +111,7 @@ This property has the attributes { [[Writable]]: false, [[Enumerable]]: false, [
 
 ### The %ArrayReverseIteratorPrototype% Object
 
-#### ArrayIteratorPrototype.reverse ( )
+#### ArrayIteratorPrototype.reversed ( )
 > This property is new, added in 22.1.5.2
 
   1. Let *O* be the **this** value.
@@ -112,7 +128,7 @@ This property has the attributes { [[Writable]]: false, [[Enumerable]]: false, [
 > This property is new, added in 22.1.5.2
 
 The initial value of the @@reverseIterator property is the same function as
-the initial value of the **ArrayIteratorPrototype.reverse** property.
+the initial value of the **ArrayIteratorPrototype.reversed** property.
 
 
 
@@ -122,7 +138,8 @@ the initial value of the **ArrayIteratorPrototype.reverse** property.
 An Array Reverse Iterator is an object, that represents a specific reverse
 iteration over some specific Array instance object. There is not a named
 constructor for Array Reverse Iterator objects. Instead, Array Reverse
-Iterator objects are created by calling **reverse** on Array Iterator objects.
+Iterator objects are created by calling **reversed** on Array objects or Array
+Iterator objects.
 
 
 ### CreateArrayReverseIterator Abstract Operation
@@ -174,7 +191,7 @@ All Array Reverse Iterator Objects inherit properties from the
   14. Return CreateIterResultObject(*result*, **false**).
 
 
-#### %ArrayReverseIteratorPrototype%.reverse ( )
+#### %ArrayReverseIteratorPrototype%.reversed ( )
 
   1. Let *O* be the **this** value.
   2. If Type(*O*) is not Object, throw a **TypeError** exception.
@@ -192,7 +209,7 @@ All Array Reverse Iterator Objects inherit properties from the
 #### ArrayReverseIteratorPrototype \[ @@reverseIterator ] ( )
 
 The initial value of the @@reverseIterator property is the same function as the
-initial value of the **ArrayReverseIteratorPrototype.reverse** property.
+initial value of the **ArrayReverseIteratorPrototype.reversed** property.
 
 
 #### %ArrayIteratorPrototype% \[ @@toStringTag ]
