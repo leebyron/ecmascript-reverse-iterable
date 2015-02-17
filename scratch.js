@@ -1,0 +1,404 @@
+// The following is all currently specced behavior in ES2015 (ES6).
+// It is all either directly referred to in the proposal, or is contextually
+// relevant to the proposal in order to produce meaningful examples.
+
+// 7.4.8
+function CreateIterResultObject(result, done) {
+  return { result: result, done: done };
+}
+
+// 19.4.1
+var Symbol = function(k){return k};
+
+// 19.4.2.5
+Symbol.iterator = Symbol('@@iterator');
+
+// 25.1.2
+var IteratorPrototype = {};
+
+// 25.1.2.1.1
+IteratorPrototype[Symbol.iterator] = function () {
+  return this;
+};
+
+// 22.1.3.4
+Array.prototype.entries = function () {
+  // 1. Let O be the result of calling ToObject with the this value as its argument.
+  // 2. ReturnIfAbrupt(O).
+  var O = Object(this);
+
+  // 3. Return CreateArrayIterator(O, "key+value").
+  return CreateArrayIterator(O, 'key+value');
+};
+
+// 22.1.3.13
+Array.prototype.keys = function () {
+  // 1. Let O be the result of calling ToObject with the this value as its argument.
+  // 2. ReturnIfAbrupt(O).
+  var O = Object(this);
+
+  // 3. Return CreateArrayIterator(O, "key").
+  return CreateArrayIterator(O, 'key');
+};
+
+// 22.1.3.29
+Array.prototype.values = function () {
+  // 1. Let O be the result of calling ToObject with the this value as its argument.
+  // 2. ReturnIfAbrupt(O).
+  var O = Object(this);
+
+  // 3. Return CreateArrayIterator(O, "value").
+  return CreateArrayIterator(O, 'value');
+};
+
+// 22.1.5.1
+function CreateArrayIterator(array, kind) {
+  var iterator = Object.create(ArrayIteratorPrototype);
+  iterator['[[IteratedObject]]'] = array;
+  iterator['[[ArrayIteratorNextIndex]]'] = 0;
+  iterator['[[ArrayIterationKind]]'] = kind;
+  return iterator;
+}
+
+// 22.1.5.2
+var ArrayIteratorPrototype = Object.create(IteratorPrototype);
+
+// 22.1.5.2.1
+ArrayIteratorPrototype.next = function() {
+  // 1. Let O be the this value.
+  var O = this;
+
+  // 2. If Type(O) is not Object, throw a TypeError exception.
+  if (typeof O !== 'object') {
+    throw new TypeError();
+  }
+
+  // 3. If O does not have all of the internal slots of an Array Iterator Instance (22.1.5.3), throw a
+  // TypeError exception.
+
+  // 4. Let a be the value of the [[IteratedObject]] internal slot of O.
+  var a = O['[[IteratedObject]]'];
+
+  // 5. If a is undefined, then return CreateIterResultObject(undefined, true).
+  if (a === undefined) {
+    return CreateIterResultObject(undefined, true);
+  }
+
+  // 6. Let index be the value of the [[ArrayIteratorNextIndex]] internal slot of O.
+  var index = O['[[ArrayIteratorNextIndex]]'];
+
+  // 7. Let itemKind be the value of the [[ArrayIterationKind]] internal slot of O.
+  var itemKind = O['[[ArrayIterationKind]]'];
+
+  // 8. Let lenValue be Get(a, "length").
+  // 9. Let len be ToLength(lenValue).
+  // 10. ReturnIfAbrupt(len).
+  var len = a.length;
+
+  // 11. If index ≥ len, then
+  if (index >= len) {
+    // a. Set the value of the [[IteratedObject]] internal slot of O to undefined.
+    O['[[IteratedObject]]'] = undefined;
+    // b. Return CreateIterResultObject(undefined, true).
+    return CreateIterResultObject(undefined, true);
+  }
+
+  // 12. Set the value of the [[ArrayIteratorNextIndex]] internal slot of O to index+1.
+  O['[[ArrayIteratorNextIndex]]'] = index + 1;
+
+  var result;
+
+  // 13. If itemKind is "key", then let result be index.
+  if (itemKind === 'key') {
+    result = index;
+  }
+
+  // 14. Else,
+  else {
+
+    // a. Let elementKey be ToString(index).
+    // b. Let elementValue be Get(a, elementKey).
+    // c. ReturnIfAbrupt(elementValue).
+    var elementValue = a[index];
+
+    // 15. If itemKind is "value", then let result be elementValue.
+    if (itemKind === 'value') {
+      result = elementValue;
+
+    // 16. Else,
+    } else {
+
+      // a. Assert itemKind is "key+value",.
+
+      // b. Let result be ArrayCreate(2).
+      // c. Assert: result is a new, well-formed Array object so the following operations will never fail.
+      // d. Call CreateDataProperty(result, "0", index).
+      // e. Call CreateDataProperty(result, "1", elementValue).
+      result = [index, elementValue];
+    }
+  }
+
+  // 17. Return CreateIterResultObject(result, false).
+  return CreateIterResultObject(result, false);
+};
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// -- The following are proposed additions to a future ECMA spec.
+
+
+// -- This interface definition is new, added within 25.1
+
+
+// # The *ReverseIterable* Interface
+//
+// The *ReverseIterable* interface includes the following property:
+//
+// | Property | Value | Requirements |
+// | `@@reverseIterator` | A zero arguments function that returns an object. | The function returns an object that conforms to the *Iterator* interface. It must iterate through values in the reverse order of `@@iterator` |
+//
+// NOTE  An object should implement the *ReverseIterable* interface only when it
+// also implements the *Iterable* interface.
+
+
+// -- This property is new, added after 19.4.2.5
+
+
+// # Symbol.reverseIterator
+Symbol.reverseIterator = Symbol('@@reverseIterator');
+
+
+// -- This property is new, added after 22.1.3.30
+
+
+// # Array.prototype [ @@reverseIterator ] ( )
+Array.prototype[Symbol.reverseIterator] = function () {
+  // 1. Let O be the result of calling ToObject with the this value as its argument.
+  // 2. ReturnIfAbrupt(O).
+  var O = Object(this);
+
+  // 3. Return CreateArrayReverseIterator(O, "value").
+  return CreateArrayReverseIterator(O, 'value');
+};
+
+
+// -- These two properties are added to ArrayIteratorPrototype, 22.1.5.2
+
+
+// # ArrayIteratorPrototype.reverse ( )
+ArrayIteratorPrototype.reverse = function () {
+  // Let *O* be the **this** value.
+  var O = this;
+  // If *O* does not have a [[IteratedObject]] internal slot, then throw a **TypeError** exception.
+  if (!O.hasOwnProperty('[[IteratedObject]]')) {
+    throw new TypeError('Missing array');
+  }
+  // Let *a* be the value of the [[IteratedObject]] internal slot of *O*.
+  var a = O['[[IteratedObject]]'];
+  // Let *index* be the value of the [[ArrayIteratorNextIndex]] internal slot of *O*.
+  var index = O['[[ArrayIteratorNextIndex]]'];
+  // If *index* !== 0, then throw a **TypeError** exception.
+  if (index !== 0) {
+    throw new TypeError('Cannot reverse once iteration has begun.');
+  }
+  // Let *itemKind* be the value of the [[ArrayIterationKind]] internal slot of *O*.
+  var itemKind = O['[[ArrayIterationKind]]'];
+  // Return CreateArrayReverseIterator(*a*, *itemKind*).
+  return CreateArrayReverseIterator(a, itemKind);
+};
+
+
+// # ArrayIteratorPrototype [ @@reverseIterator ] ( )
+// The initial value of the @@reverseIterator property is the same function as
+// the initial value of the **ArrayIteratorPrototype.reverse** property.
+ArrayIteratorPrototype[Symbol.reverseIterator] = ArrayIteratorPrototype.reverse;
+
+
+// -- This section is new, added after 22.1.5
+
+
+// # Array Reverse Iterator Objects
+
+// An Array Reverse Iterator is an object, that represents a specific reverse
+// iteration over some specific Array instance object. There is not a named
+// constructor for Array Reverse Iterator objects. Instead, Array Reverse
+// Iterator objects are created by calling **reverse** on Array Iterator objects.
+
+
+// # CreateArrayReverseIterator Abstract Operation
+function CreateArrayReverseIterator(array, kind) {
+  // Assert: Type(*array*) is Object
+  // Let *iterator* be ObjectCreate(%ArrayIteratorPrototype%, ([[IteratedObject]], [[ArrayReverseIteratorNextIndex]], [[ArrayIterationKind]])).
+  var iterator = Object.create(ArrayReverseIteratorPrototype);
+  // Set *iterator’s* [[IteratedObject]] internal slot to *array*.
+  iterator['[[IteratedObject]]'] = array;
+  // Let *lenValue* be Get(*array*, "length").
+  // Let *len* be ToLength(*lenValue*).
+  // ReturnIfAbrupt(*len*).
+  var len = array.length;
+  // Set *iterator’s* [[ArrayReverseIteratorNextIndex]] internal slot to *len*-1.
+  iterator['[[ArrayReveseIteratorNextIndex]]'] = len - 1;
+  // Set *iterator’s* [[ArrayIteratorKind]] internal slot to *kind*.
+  iterator['[[ArrayIterationKind]]'] = kind;
+  // Return *iterator*.
+  return iterator;
+}
+
+
+// # The %ArrayReverseIteratorPrototype% Object
+
+// All Array Reverse Iterator Objects inherit properties from the
+// %ArrayReverseIteratorPrototype% intrinsic object. The
+// %ArrayReverseIteratorPrototype% object is an ordinary object and its
+// [[Prototype]] internal slot is the %IteratorPrototype% intrinsic object
+// (25.1.2). In addition, %ArrayReverseIteratorPrototype% has the following
+//  properties:
+var ArrayReverseIteratorPrototype = Object.create(IteratorPrototype);
+
+
+// # %ArrayReverseIteratorPrototype%.next ( )
+ArrayReverseIteratorPrototype.next = function () {
+
+  // 1. Let O be the this value.
+  var O = this;
+
+  // 2. If Type(O) is not Object, throw a TypeError exception.
+  if (typeof O !== 'object') {
+    throw new TypeError();
+  }
+
+  // 3. If O does not have all of the internal slots of an Array Iterator Instance (22.1.5.3), throw a
+  // TypeError exception.
+
+  // 4. Let a be the value of the [[IteratedObject]] internal slot of O.
+  var a = O['[[IteratedObject]]'];
+
+  // 5. If a is undefined, then return CreateIterResultObject(undefined, true).
+  if (a === undefined) {
+    return CreateIterResultObject(undefined, true);
+  }
+
+  // 6. Let index be the value of the [[ArrayIteratorNextIndex]] internal slot of O.
+  var index = O['[[ArrayReveseIteratorNextIndex]]'];
+
+  // 7. Let itemKind be the value of the [[ArrayIterationKind]] internal slot of O.
+  var itemKind = O['[[ArrayIterationKind]]'];
+
+  // 8. If index < 0, then
+  if (index < 0) {
+    // a. Set the value of the [[IteratedObject]] internal slot of O to undefined.
+    O['[[IteratedObject]]'] = undefined;
+    // b. Return CreateIterResultObject(undefined, true).
+    return CreateIterResultObject(undefined, true);
+  }
+
+  // 9. Set the value of the [[ArrayReverseIteratorNextIndex]] internal slot of O to index-1.
+  O['[[ArrayReveseIteratorNextIndex]]'] = index - 1;
+
+  var result;
+
+  // 10. If itemKind is "key", then let result be index.
+  if (itemKind === 'key') {
+    result = index;
+  }
+
+  // 11. Else,
+  else {
+
+    // a. Let elementKey be ToString(index).
+    // b. Let elementValue be Get(a, elementKey).
+    // c. ReturnIfAbrupt(elementValue).
+    var elementValue = a[index];
+
+    // 12. If itemKind is "value", then let result be elementValue.
+    if (itemKind === 'value') {
+      result = elementValue;
+
+    // 13. Else,
+    } else {
+
+      // a. Assert itemKind is "key+value",.
+
+      // b. Let result be ArrayCreate(2).
+      // c. Assert: result is a new, well-formed Array object so the following operations will never fail.
+      // d. Call CreateDataProperty(result, "0", index).
+      // e. Call CreateDataProperty(result, "1", elementValue).
+      result = [index, elementValue];
+    }
+  }
+
+  // 14. Return CreateIterResultObject(result, false).
+  return CreateIterResultObject(result, false);
+};
+
+
+// # %ArrayReverseIteratorPrototype%.reverse ( )
+ArrayReverseIteratorPrototype.reverse = function () {
+  // Let *O* be the **this** value.
+  var O = this;
+
+  // If *O* does not have a [[IteratedObject]] internal slot, then throw a **TypeError** exception.
+  if (!O.hasOwnProperty('[[IteratedObject]]')) {
+    throw new TypeError('Missing array');
+  }
+
+  // Let *a* be the value of the [[IteratedObject]] internal slot of *O*.
+  var a = O['[[IteratedObject]]'];
+
+  // Let *index* be the value of the [[ArrayReverseIteratorNextIndex]] internal slot of *O*.
+  var index = O['[[ArrayReverseIteratorNextIndex]]'];
+
+  // Let *lenValue* be Get(a, "length").
+  // Let *len* be ToLength(*lenValue*).
+  // ReturnIfAbrupt(*len*).
+  var len = a.length;
+
+  // If *index* !== *len*-1, then throw a **TypeError** exception.
+  if (index !== len - 1) {
+    throw new TypeError('Cannot reverse once iteration has begun.');
+  }
+
+  // Let *itemKind* be the value of the [[ArrayIterationKind]] internal slot of *O*.
+  var itemKind = O['[[ArrayIterationKind]]'];
+
+  // Return CreateArrayReverseIterator(*a*, *itemKind*).
+  return CreateArrayReverseIterator(a, itemKind);
+};
+
+
+// # ArrayReverseIteratorPrototype [ @@reverseIterator ] ( )
+// The initial value of the @@reverseIterator property is the same function as
+// the initial value of the **ArrayReverseIteratorPrototype.reverse** property.
+ArrayReverseIteratorPrototype[Symbol.reverseIterator] =
+  ArrayReverseIteratorPrototype.reverse;
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+var array = ['A','B','C'];
+var revEntries = array.entries().reverse();
+console.log(revEntries.next());
+console.log(revEntries.next());
+console.log(revEntries.next());
+console.log(revEntries.next());
+console.log(revEntries.next());
