@@ -157,7 +157,7 @@ The *ReverseIterable* interface includes the following property:
 
 | Property | Value | Requirements |
 | -------- | ----- | ------------ |
-| `@@reverseIterator` | A function that returns an Iterator object. | The returned object must conform to the *Iterator* interface. It must iterate through values in the reverse order of the object returned from the `@@iterator` function. |
+| @@reverseIterator | A function that returns an Iterator object. | The returned object must conform to the *Iterator* interface. It must iterate through values in the reverse order of the object returned from the `@@iterator` function. |
 
 NOTE  An object should implement the *ReverseIterable* interface only when it
 also implements the *Iterable* interface.
