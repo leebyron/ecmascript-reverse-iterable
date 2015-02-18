@@ -2,7 +2,7 @@
 
 Spec proposal for ECMA-262
 
-**Stage:** Strawman (0)
+**Stage:** 0, Strawman
 
 **Author:** Lee Byron
 
@@ -72,6 +72,7 @@ iterable and use that to it's advantage.
 The *ReverseIterable* interface includes the following property:
 
 | Property | Value | Requirements |
+| -------- | ----- | ------------ |
 | `@@reverseIterator` | A zero arguments function that returns an object. | The function returns an object that conforms to the *Iterator* interface. It must iterate through values in the reverse order of `@@iterator` |
 
 NOTE  An object should implement the *ReverseIterable* interface only when it
@@ -228,9 +229,10 @@ Iterator instances are initially created with the internal slots listed in the
 following table.
 
 | Internal Slot                     | Description |
-| [[IteratedObject]]                | The object whose array elements are being iterated.
-| [[ArrayReverseIteratorNextIndex]] | The integer index of the next array index to be examined by this iteration.
-| [[ArrayIterationKind]]            | A string value that identifies what is to be returned for each element of the iteration. The possible values are: **"key"**, **"value"**, **"key+value"**.
+| --------------------------------- | ----------- |
+| [[IteratedObject]]                | The object whose array elements are being iterated. |
+| [[ArrayReverseIteratorNextIndex]] | The integer index of the next array index to be examined by this iteration. |
+| [[ArrayIterationKind]]            | A string value that identifies what is to be returned for each element of the iteration. The possible values are: **"key"**, **"value"**, **"key+value"**. |
 
 
 
@@ -257,7 +259,7 @@ following table.
 
 
 
-Not sure we need these yet...
+Works in Progress...
 
 
 ### CheckReverseIterable ( obj )
