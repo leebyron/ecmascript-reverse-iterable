@@ -18,11 +18,11 @@ polyfill();
   // Array iterator can produce a reverse iterator of the same kind with reversed()
   var array = ['A','B','C'];
   var revEntries = array.entries().reversed();
-  console.log(revEntries.next());
-  console.log(revEntries.next());
-  console.log(revEntries.next());
-  console.log(revEntries.next());
-  console.log(revEntries.next());
+  console.log(revEntries.next()); // [2, "C"]
+  console.log(revEntries.next()); // [1, "B"]
+  console.log(revEntries.next()); // [0, "A"]
+  console.log(revEntries.next()); // undefined
+  console.log(revEntries.next()); // undefined
 })();
 
 
@@ -87,13 +87,16 @@ polyfill();
 
   var array = ['A','B','C'];
 
+  // Illustrate that a reverse-iterator can be mapped, and the result of that
+  // can be reversed itself. A reverse-iterator can be reversed yet again.
+  // This simply sets up the iterator, no buffering occurs.
   var rev = array.reversed().map(function (l) { return l + l; }).reversed().reversed();
   console.log(rev);
-  console.log(rev.next());
-  console.log(rev.next());
-  console.log(rev.next());
-  console.log(rev.next());
-  console.log(rev.next());
+  console.log(rev.next()); // "CC"
+  console.log(rev.next()); // "BB"
+  console.log(rev.next()); // "AA"
+  console.log(rev.next()); // undefined
+  console.log(rev.next()); // undefined
   console.log(rev);
 })();
 
