@@ -61,6 +61,48 @@ iterable and use that to it's advantage.
 
 
 
+# Alternatives
+
+There are a few other approaches we could take worth discussing.
+
+#### `reverse()` instead of `reversed()`
+
+In this alternative, we rename the method on **%IteratorPrototype%** from
+`reversed` to `reverse`. There is already a method called `reverse` on
+**Array.prototype**, so we the proposed functionality is not added to
+**Array.prototype** at all.
+
+Pros:
+
+  * No potential confusion between `reverse()` and `reversed()` on **Array.prototype**.
+  * Good parallel between **Array.prototype.reverse** and **%IteratorPrototype%.reverse**.
+    The story is that `reverse` should return a similar type of thing as the `this` context.
+
+Cons:
+
+  * No nice way to get a reverse iterator from an Array directly. Must call
+    **Array.prototype[Symbol.reverseIterator]** to get one.
+
+
+#### `reversed()` marks the interface
+
+In this alternative, we get rid of **Symbol.reverseIterator** and directly use
+the existence of **reversed** to mark the *ReverseIterable* interface.
+
+Pros:
+
+  * Fewer pieces to implement for a useful *ReverseIterable* implementation.
+  * If **reversed** exists, you can call it.
+
+Cons:
+
+  * `reversed` could be too common of a property name in user-land to make this
+    distinction in spec.
+  * If you call `reversed()` on a non ReverseIterable, you get a less clear
+    exception message concerning calling undefined as a function.
+
+
+
 # Additions to Spec
 
 
