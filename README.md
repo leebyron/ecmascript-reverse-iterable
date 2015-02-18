@@ -122,6 +122,22 @@ also implements the *Iterable* interface.
 
 
 
+## 25.1.2 The %IteratorPrototype% Object
+
+#### %IteratorPrototype%.reversed ( )
+> This property is new, added in 25.1.2.1
+
+The following steps are taken:
+
+  1. Let *O* be the result of calling ToObject with the **this** value as its argument.
+  2. ReturnIfAbrupt(*O*).
+  3. Let *usingReverseIterator* be CheckReverseIterable(*O*).
+  4. If *usingReverseIterator* is **undefined**, throw a **TypeError** exception.
+  5. Let *iterator* be GetIterator(*O*, *usingReverseIterator*).
+  6. return *iterator*.
+
+
+
 ## 7.4 Operations on Iterator Objects
 
 ### CheckReverseIterable ( obj )
@@ -151,7 +167,7 @@ This property has the attributes { [[Writable]]: false, [[Enumerable]]: false, [
 ### Array.prototype.reversed ( )
 > This property is new, added in 22.1.3
 
-  1. Let *O* be the result of calling ToObject with the this value as its argument.
+  1. Let *O* be the result of calling ToObject with the **this** value as its argument.
   2. ReturnIfAbrupt(*O*).
   3. Return CreateArrayReverseIterator(*O*, **"value"**).
 
@@ -223,7 +239,7 @@ All Array Reverse Iterator Objects inherit properties from the
 
 #### %ArrayReverseIteratorPrototype%.next ( )
 
-  1. Let *O* be the this value.
+  1. Let *O* be the **this** value.
   2. If Type(*O*) is not Object, throw a **TypeError** exception.
   3. If *O* does not have all of the internal slots of an Array Reverse Iterator Instance, throw a **TypeError** exception.
   4. Let *a* be the value of the [[IteratedObject]] internal slot of *O*.
@@ -337,7 +353,7 @@ The abstract operation CreateListIterator with argument list creates an Iterator
 
 The ListIterator next method is a standard built-in function object (clause 17) that performs the following steps:
 
-1. Let O be the this value.
+1. Let O be the **this** value.
 2. Let f be the active function object.
 3. If O does not have a [[IteratorNext]] internal slot, then throw a TypeError exception.
 4. Let next be the value of the [[IteratorNext]] internal slot of O.
@@ -374,7 +390,7 @@ The abstract operation CreateListReverseIterator with argument list creates an I
 
 The ListIterator next method is a standard built-in function object (clause 17) that performs the following steps:
 
-1. Let O be the this value.
+1. Let O be the **this** value.
 2. Let f be the active function object.
 3. If O does not have a [[IteratorNext]] internal slot, then throw a TypeError exception.
 4. Let next be the value of the [[IteratorNext]] internal slot of O.

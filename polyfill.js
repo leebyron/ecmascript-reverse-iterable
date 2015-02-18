@@ -212,7 +212,7 @@ ArrayIteratorPrototype.next = function() {
 // also implements the *Iterable* interface.
 
 
-// -- This property is new, added after 7.4.2
+// -- This abtract operation is new, added after 7.4.2
 
 function CheckReverseIterable(obj) {
   // 1. If Type(*obj*) is not Object, then return **undefined**.
@@ -252,8 +252,8 @@ Array.prototype[Symbol.reverseIterator] = Array.prototype.reversed;
 // -- These two properties are added to ArrayIteratorPrototype, 22.1.5.2
 
 
-// # ArrayIteratorPrototype.reversed ( )
-ArrayIteratorPrototype.reversed = function () {
+// # ArrayIteratorPrototype [ @@reverseIterator ] ( )
+ArrayIteratorPrototype[Symbol.reverseIterator] = function () {
   // Let *O* be the **this** value.
   var O = this;
 
@@ -280,10 +280,24 @@ ArrayIteratorPrototype.reversed = function () {
 };
 
 
-// # ArrayIteratorPrototype [ @@reverseIterator ] ( )
-// The initial value of the @@reverseIterator property is the same function as
-// the initial value of the **ArrayIteratorPrototype.reversed** property.
-ArrayIteratorPrototype[Symbol.reverseIterator] = ArrayIteratorPrototype.reversed;
+// -- This property is new, added after 25.1.2.1.1
+
+
+IteratorPrototype.reversed = function() {
+  // 1. Let *O* be the result of calling ToObject with the **this** value as its argument.
+  // 2. ReturnIfAbrupt(*O*).
+  var O = Object(this);
+  // 3. Let *usingReverseIterator* be CheckReverseIterable(*O*).
+  var usingReverseIterator = CheckReverseIterable(O);
+  // 4. If *usingReverseIterator* is **undefined**, throw a **TypeError** exception.
+  if (usingReverseIterator === undefined) {
+    throw new TypeError('This iterator is not reversable');
+  }
+  // 5. Let *iterator* be GetIterator(*O*, *usingReverseIterator*).
+  var iterator = GetIterator(O, usingReverseIterator);
+  // 6. return *iterator*.
+  return iterator;
+};
 
 
 // -- This section is new, added after 22.1.5
@@ -404,8 +418,8 @@ ArrayReverseIteratorPrototype.next = function () {
 };
 
 
-// # %ArrayReverseIteratorPrototype%.reversed ( )
-ArrayReverseIteratorPrototype.reversed = function () {
+// # ArrayReverseIteratorPrototype [ @@reverseIterator ] ( )
+ArrayReverseIteratorPrototype[Symbol.reverseIterator] = function () {
   // Let *O* be the **this** value.
   var O = this;
 
@@ -441,11 +455,7 @@ ArrayReverseIteratorPrototype.reversed = function () {
 };
 
 
-// # ArrayReverseIteratorPrototype [ @@reverseIterator ] ( )
-// The initial value of the @@reverseIterator property is the same function as
-// the initial value of the **ArrayReverseIteratorPrototype.reversed** property.
-ArrayReverseIteratorPrototype[Symbol.reverseIterator] =
-  ArrayReverseIteratorPrototype.reversed;
+
 
 
 
@@ -503,7 +513,6 @@ function CreateMappedIterator(originalIterator, mapper, context) {
   iterator.next = MappedIteratorNext;
   var reverseIterable = CheckReverseIterable(originalIterator);
   if (reverseIterable !== undefined) {
-    iterator.reversed = MappedIteratorReversed;
     iterator[Symbol.reverseIterator] = MappedIteratorReversed;
   }
   return iterator;
