@@ -106,8 +106,10 @@ Cons:
 # Additions to Spec
 
 
-## The *ReverseIterable* Interface
-> This interface is new.
+## 25.1.1 Common Iteration Interfaces
+
+### The *ReverseIterable* Interface
+> This interface is new, added in 25.1.1
 
 The *ReverseIterable* interface includes the following property:
 
@@ -117,6 +119,19 @@ The *ReverseIterable* interface includes the following property:
 
 NOTE  An object should implement the *ReverseIterable* interface only when it
 also implements the *Iterable* interface.
+
+
+
+## 7.4 Operations on Iterator Objects
+
+### CheckReverseIterable ( obj )
+> This abstract operation is new, added in 7.4
+
+The abstract operation CheckReverseIterable with argument *obj* performs the
+following steps:
+
+  1. If Type(*obj*) is not Object, then return **undefined**.
+  2. Return Get(*obj*, @@reverseIterator).
 
 
 
@@ -302,13 +317,6 @@ following table.
 Works in Progress...
 
 
-### CheckReverseIterable ( obj )
-
-The abstract operation CheckReverseIterable with argument *obj* performs the
-following steps:
-
-  1. If Type(*obj*) is not Object, then return **undefined**.
-  2. Return Get(*obj*, @@reverseIterator).
 
 
 

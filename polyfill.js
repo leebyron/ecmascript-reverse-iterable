@@ -2,8 +2,53 @@
 // It is all either directly referred to in the proposal, or is contextually
 // relevant to the proposal in order to produce meaningful examples.
 
+// 7.2.2
+function IsCallable(argument) {
+  return typeof argument === 'function';
+}
+
+// 7.4.1
+function CheckIterable(obj) {
+  // 1. If Type(*obj*) is not Object, then return **undefined**.
+  if (Object(obj) !== obj) {
+    return undefined;
+  }
+  // 2. Return Get(*obj*, @@iterator).
+  return obj[Symbol.iterator];
+}
+
+// 7.4.2
+function GetIterator(obj, method) {
+  // 1. ReturnIfAbrupt(obj).
+  // 2. If method was not passed, then
+  if (arguments.length < 2) {
+    // a. Let method be CheckIterable(obj).
+    // b. ReturnIfAbrupt(method).
+    method = CheckIterable(obj);
+  }
+  // 3. If IsCallable(method) is false, then throw a TypeError exception.
+  if (IsCallable(method) === false) {
+    throw new TypeError('method must be callable');
+  }
+  // 4. Let iterator be the result of calling the [[Call]] internal method of
+  //    method with obj as thisArgument and an empty List as argumentsList.
+  var iterator = method.call(obj);
+  // 5. ReturnIfAbrupt(iterator).
+  // 6. If Type(iterator) is not Object, then throw a TypeError exception.
+  if (Object(iterator) !== iterator) {
+    throw new TypeError('method must return an iterator');
+  }
+  // 7. Return iterator.
+  return iterator;
+}
+
 // 7.4.8
 function CreateIterResultObject(value, done) {
+  // 1. Assert: Type(done) is Boolean.
+  // 2. Let obj be ObjectCreate(%ObjectPrototype%).
+  // 3. Perform CreateDataProperty(obj, "value", value).
+  // 4. Perform CreateDataProperty(obj, "done", done).
+  // 5. Return obj.
   return { value: value, done: done };
 }
 
@@ -165,6 +210,18 @@ ArrayIteratorPrototype.next = function() {
 //
 // NOTE  An object should implement the *ReverseIterable* interface only when it
 // also implements the *Iterable* interface.
+
+
+// -- This property is new, added after 7.4.2
+
+function CheckReverseIterable(obj) {
+  // 1. If Type(*obj*) is not Object, then return **undefined**.
+  if (typeof obj !== 'object') {
+    return undefined;
+  }
+  // 2. Return Get(*obj*, @@reverseIterator).
+  return obj[Symbol.reverseIterator];
+}
 
 
 // -- This property is new, added after 19.4.2.5
@@ -391,15 +448,6 @@ ArrayReverseIteratorPrototype[Symbol.reverseIterator] =
   ArrayReverseIteratorPrototype.reversed;
 
 
-// # CheckReverseIterable ( obj )
-function CheckReverseIterable(obj) {
-  // 1. If Type(*obj*) is not Object, then return **undefined**.
-  if (typeof obj !== 'object') {
-    return undefined;
-  }
-  // 2. Return Get(*obj*, @@reverseIterator).
-  return obj[Symbol.reverseIterator];
-}
 
 
 
@@ -485,7 +533,8 @@ function MappedIteratorNext() {
 function MappedIteratorReversed() {
   var O = Object(this);
   var iterator = O['[[OriginalIterator]]'];
-  var reverseIterator = iterator[Symbol.reverseIterator](); // GetIterator(iterator, iterator[Symbol.reverseIterator]);
+  var reverseIteratorMethod = iterator[Symbol.reverseIterator];
+  var reverseIterator = GetIterator(iterator, reverseIteratorMethod);
   var mapper = O['[[MappingFunction]]'];
   var context = O['[[MappingContext]]'];
   return CreateMappedIterator(reverseIterator, mapper, context);
