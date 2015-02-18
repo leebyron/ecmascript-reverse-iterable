@@ -62,8 +62,7 @@ iterable and use that to it's advantage.
 
 ## FAQ
 
-#### What happens if `reversed()` is called on something not easily reversed,
-like a Generator function?
+**What happens if `reversed()` is called on something not easily reversed, like a Generator function?**
 
 This proposal suggests one-way iterables remain one-way. There is no buffering
 in the native implementation of `%IteratorPrototype%.reverse()` when called on a
