@@ -135,6 +135,14 @@ Cons:
 
 # Additions to Spec
 
+## 6.1.5.1 Well-Known Symbols
+> One row is added to Table 1.
+
+| Specification Name | [[Description]] | Value and Purpose |
+| ------------------ | --------------- | ----------------- |
+| @@reverseIterator  | "Symbol.reverseIterator" | A method that returns the default reverse iterator for an object. Called by the **reversed** method of Iterators and Collections. |
+
+
 
 ## 25.1.1 Common Iteration Interfaces
 
