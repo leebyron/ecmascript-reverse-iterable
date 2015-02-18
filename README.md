@@ -388,7 +388,7 @@ that performs the following steps:
 
 
 ### 7.4.10 CreateCompoundIterator ( iterator1, iterator2 )
-> This existing abstract operation has had 2 new steps added.
+> This existing abstract operation has had 3 new steps added.
 
   1. Let *iterator* be ObjectCreate(%IteratorPrototype%, ([[Iterator1]], [[Iterator2]], [[State]], [[IteratorNext]])).
   2. Set *iterator’s* [[Iterator1]] internal slot to *iterator1*.
@@ -396,12 +396,16 @@ that performs the following steps:
   4. Set *iterator’s* [[State]] internal slot to 1.
   5. Let *next* be a new built-in function object as defined in CompoundIterator **next** (7.4.10.1).
   6. Set *iterator’s* [[IteratorNext]] internal slot to *next*.
-  7. Let *reversed* be a new built-in function object as defined in CompoundIterator **reversed**.
+  7. Let *usingReverseIterator1* be CheckReverseIterable(*iterator1*).
      > This step is new.
-  8. Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]:*reversed*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).
+  8. Let *usingReverseIterator2* be CheckReverseIterable(*iterator2*).
      > This step is new.
-  9. Let *status* be the result of CreateDataProperty(iterator, **"next"**, *next*).
-  10. Return *iterator*.
+  9. If *usingReverseIterator1* is not **undefined** and *usingReverseIterator2* is not **undefined**.
+     > This step is new.
+      a. Let *reversed* be a new built-in function object as defined in CompoundIterator **reversed**.
+      b. Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]:*reversed*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).
+  10. Let *status* be the result of CreateDataProperty(iterator, **"next"**, *next*).
+  11. Return *iterator*.
 
 #### CompoundIterator reversed ( )
 > This method is new, added in 7.4.10
