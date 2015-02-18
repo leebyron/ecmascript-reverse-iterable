@@ -131,6 +131,9 @@ Cons:
     distinction in spec.
   * If you call **reversed()** on a non ReverseIterable, you get a less clear
     exception message concerning calling undefined as a function.
+  * A user-land object may wish to implement **reversed** such that it uses the
+    buffering technique explained as explicitly not proposed in FAQ, however
+    this should not cause it to be identified as a *ReverseIterable* as proposed.
 
 
 
