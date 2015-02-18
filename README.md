@@ -136,7 +136,7 @@ Cons:
 
 # Additions to Spec
 
-## 6.1.5.1 Well-Known Symbols
+## 6.1.5.1  Well-Known Symbols
 > One row is added to Table 1.
 
 | Specification Name | [[Description]] | Value and Purpose |
@@ -145,10 +145,10 @@ Cons:
 
 
 
-## 25.1.1 Common Iteration Interfaces
+## 25.1.1  Common Iteration Interfaces
 
-### The *ReverseIterable* Interface
-> This interface is new, added in 25.1.1
+### 25.1.1.X  The *ReverseIterable* Interface
+> This interface is new
 
 The *ReverseIterable* interface includes the following property:
 
@@ -161,10 +161,10 @@ also implements the *Iterable* interface.
 
 
 
-## 25.1.2 The %IteratorPrototype% Object
+## 25.1.2  The %IteratorPrototype% Object
 
-#### %IteratorPrototype%.reversed ( )
-> This property is new, added in 25.1.2.1
+#### 25.1.2.1.X  %IteratorPrototype%.reversed ( )
+> This property is new
 
 The following steps are taken:
 
@@ -179,8 +179,8 @@ The following steps are taken:
 
 ## 19.4.2  Properties of the Symbol Constructor
 
-### Symbol.reverseIterator
-> This property is new, added in 19.4.2
+### 19.4.2.X  Symbol.reverseIterator
+> This property is new
 
 The initial value of Symbol.reverseIterator is the well known symbol @@reverseIterator (Table 1).
 
@@ -190,15 +190,15 @@ This property has the attributes { [[Writable]]: **false**, [[Enumerable]]: **fa
 
 ## 22.1.3  Properties of the Array Prototype Object
 
-### Array.prototype.reversed ( )
-> This property is new, added in 22.1.3
+### 22.1.3.X  Array.prototype.reversed ( )
+> This property is new
 
   1. Let *O* be the result of calling ToObject with the **this** value as its argument.
   2. ReturnIfAbrupt(*O*).
   3. Return CreateArrayReverseIterator(*O*, **"value"**).
 
-### Array.prototype \[ @@reverseIterator ] ( )
-> This property is new, added in 22.1.3
+### 22.1.3.X  Array.prototype \[ @@reverseIterator ] ( )
+> This property is new
 
 The initial value of the @@reverseIterator property is the same function object
 as the initial value of the **Array.prototype.reversed** property.
@@ -209,8 +209,8 @@ as the initial value of the **Array.prototype.reversed** property.
 
 ### 22.1.5.2  The %ArrayIteratorPrototype% Object
 
-#### ArrayIteratorPrototype \[ @@reverseIterator ] ( )
-> This property is new, added in 22.1.5.2
+#### 22.1.5.2.X  ArrayIteratorPrototype \[ @@reverseIterator ] ( )
+> This property is new
 
   1. Let *O* be the **this** value.
   2. If Type(*O*) is not Object, throw a **TypeError** exception.
@@ -223,8 +223,8 @@ as the initial value of the **Array.prototype.reversed** property.
 
 
 
-## Array Reverse Iterator Objects
-> This section is new, added after 22.1.5
+## 22.1.X  Array Reverse Iterator Objects
+> This section is new
 
 An Array Reverse Iterator is an object, that represents a specific reverse
 iteration over some specific Array instance object. There is not a named
@@ -233,7 +233,7 @@ Iterator objects are created by calling **reversed** on Array objects or Array
 Iterator objects.
 
 
-### CreateArrayReverseIterator Abstract Operation
+### 22.1.X.1  CreateArrayReverseIterator Abstract Operation
 
   1. Assert: Type(*array*) is Object
   2. Let *iterator* be ObjectCreate(%ArrayIteratorPrototype%, ([[IteratedObject]], [[ArrayReverseIteratorNextIndex]], [[ArrayIterationKind]])).
@@ -246,7 +246,7 @@ Iterator objects.
   9. Return *iterator*.
 
 
-### The %ArrayReverseIteratorPrototype% Object
+### 22.1.X.2  The %ArrayReverseIteratorPrototype% Object
 
 All Array Reverse Iterator Objects inherit properties from the
 %ArrayReverseIteratorPrototype% intrinsic object. The
@@ -256,7 +256,7 @@ All Array Reverse Iterator Objects inherit properties from the
  properties:
 
 
-#### %ArrayReverseIteratorPrototype%.next ( )
+#### 22.1.X.2.1  %ArrayReverseIteratorPrototype%.next ( )
 
   1. Let *O* be the **this** value.
   2. If Type(*O*) is not Object, throw a **TypeError** exception.
@@ -282,7 +282,7 @@ All Array Reverse Iterator Objects inherit properties from the
   14. Return CreateIterResultObject(*result*, **false**).
 
 
-#### ArrayReverseIteratorPrototype \[ @@reverseIterator ] ( )
+#### 22.1.X.2.2  ArrayReverseIteratorPrototype \[ @@reverseIterator ] ( )
 
   1. Let *O* be the **this** value.
   2. If Type(*O*) is not Object, throw a **TypeError** exception.
@@ -297,7 +297,7 @@ All Array Reverse Iterator Objects inherit properties from the
   11. Return CreateArrayIterator(*a*, *itemKind*).
 
 
-#### %ArrayIteratorPrototype% \[ @@toStringTag ]
+#### 22.1.X.2.3  %ArrayIteratorPrototype% \[ @@toStringTag ]
 
 The initial value of the @@toStringTag property is the string value
 **"Array Reverse Iterator"**.
@@ -305,7 +305,7 @@ The initial value of the @@toStringTag property is the string value
 This property has the attributes { [[Writable]]: **false**, [[Enumerable]]: **false**, [[Configurable]]: **true** }.
 
 
-### Properties of Array Reverse Iterator
+### 22.1.X.3  Properties of Array Reverse Iterator
 
 Array Reverse Iterator instances are ordinary objects that inherit properties
 from the %ArrayReverseIteratorPrototype% intrinsic object. Array Reverse
@@ -320,29 +320,31 @@ following table.
 
 
 
-## String Reverse Iterator Objects
-> This section is new
-
-*TK* changes will mirror Array changes.
-
-
-## Map Reverse Iterator Objects
-> This section is new
-
-*TK* changes will mirror Array changes.
-
-
-## Set Reverse Iterator Objects
+## 21.1.X  String Reverse Iterator Objects
 > This section is new
 
 *TK* changes will mirror Array changes.
 
 
 
-## 7.4 Operations on Iterator Objects
+## 23.1.X  Map Reverse Iterator Objects
+> This section is new
 
-### CheckReverseIterable ( obj )
-> This abstract operation is new, added in 7.4
+*TK* changes will mirror Array changes.
+
+
+
+## 23.2.X  Set Reverse Iterator Objects
+> This section is new
+
+*TK* changes will mirror Array changes.
+
+
+
+## 7.4  Operations on Iterator Objects
+
+### 7.4.X  CheckReverseIterable ( obj )
+> This abstract operation is new
 
 The abstract operation CheckReverseIterable with argument *obj* performs the
 following steps:
@@ -351,7 +353,7 @@ following steps:
   2. Return Get(*obj*, @@reverseIterator).
 
 
-### 7.4.9 CreateListIterator ( list )
+### 7.4.9  CreateListIterator ( list )
 > This existing abstract operation has 2 new steps added: 6 and 7.
 
   1. Let *iterator* be ObjectCreate(%IteratorPrototype%, ([[IteratorNext]], [[IteratedList]], [[ListIteratorNextIndex]])).
@@ -364,8 +366,8 @@ following steps:
   8. Let *status* be the result of CreateDataProperty(iterator, **"next"**, *next*).
   9. Return *iterator*.
 
-#### ListIterator reversed ( )
-> This method is new, added in 7.4.9
+#### 7.4.9.X  ListIterator reversed ( )
+> This method is new
 
 The ListIterator **reversed** method is a standard built-in function object (clause 17)
 that performs the following steps:
@@ -376,8 +378,8 @@ that performs the following steps:
   4. Return CreateListReverseIterator(*list*).
 
 
-### CreateListReverseIterator ( list )
-> This abstract operation and section is new, added in 7.4
+### 7.4.X  CreateListReverseIterator ( list )
+> This abstract operation and section is new
 
 The abstract operation CreateListReverseIterator with argument list creates an
 Iterator (25.1.1.2) object whose next method returns the successive elements of
@@ -394,7 +396,7 @@ list in ascending (reverse) order. It performs the following steps:
   9. Let *status* be the result of CreateDataProperty(*iterator*, **"next"**, *next*).
   10. Return *iterator*.
 
-#### ListReverseIterator next ( )
+#### 7.4.X.1  ListReverseIterator next ( )
 
 The ListReverseIterator **next** method is a standard built-in function object (clause 17) that performs the following steps:
 
@@ -413,7 +415,7 @@ The ListReverseIterator **next** method is a standard built-in function object (
 
 NOTE  A ListReverseIterator **next** method will throw an exception if applied to any object other than the one with which it was originally associated.
 
-#### ListReverseIterator reversed ( )
+#### 7.4.X.2  ListReverseIterator reversed ( )
 
 The ListReverseIterator **reversed** method is a standard built-in function object (clause 17)
 that performs the following steps:
@@ -424,7 +426,7 @@ that performs the following steps:
   4. Return CreateListIterator(*list*).
 
 
-### 7.4.10 CreateCompoundIterator ( iterator1, iterator2 )
+### 7.4.10  CreateCompoundIterator ( iterator1, iterator2 )
 > This existing abstract operation has had 3 new steps added: 7, 8, and 9.
 
   1. Let *iterator* be ObjectCreate(%IteratorPrototype%, ([[Iterator1]], [[Iterator2]], [[State]], [[IteratorNext]])).
@@ -441,8 +443,8 @@ that performs the following steps:
   10. Let *status* be the result of CreateDataProperty(iterator, **"next"**, *next*).
   11. Return *iterator*.
 
-#### CompoundIterator reversed ( )
-> This method is new, added in 7.4.10
+#### 7.4.10.X  CompoundIterator reversed ( )
+> This method is new
 
 The CompoundIterator **reversed** method is a standard built-in function object (clause 17)
 that performs the following steps:
