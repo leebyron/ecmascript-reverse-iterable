@@ -80,7 +80,7 @@ also implements the *Iterable* interface.
 
 
 
-## Properties of the Symbol Constructor
+## 19.4.2  Properties of the Symbol Constructor
 
 ### Symbol.reverseIterator
 > This property is new, added in 19.4.2
@@ -91,7 +91,7 @@ This property has the attributes { [[Writable]]: false, [[Enumerable]]: false, [
 
 
 
-## Properties of the Array Prototype Object
+## 22.1.3  Properties of the Array Prototype Object
 
 ### Array.prototype.reversed ( )
 > This property is new, added in 22.1.3
@@ -108,9 +108,9 @@ as the initial value of the **Array.prototype.reversed** property.
 
 
 
-## Array Iterator Objects
+## 22.1.5  Array Iterator Objects
 
-### The %ArrayIteratorPrototype% Object
+### 22.1.5.2  The %ArrayIteratorPrototype% Object
 
 #### ArrayIteratorPrototype.reversed ( )
 > This property is new, added in 22.1.5.2
@@ -148,7 +148,7 @@ Iterator objects.
   1. Assert: Type(*array*) is Object
   2. Let *iterator* be ObjectCreate(%ArrayIteratorPrototype%, ([[IteratedObject]], [[ArrayReverseIteratorNextIndex]], [[ArrayIterationKind]])).
   3. Set *iterator’s* [[IteratedObject]] internal slot to *array*.
-  4. Let *lenValue* be Get(*array*, "length").
+  4. Let *lenValue* be Get(*array*, **"length"**).
   5. Let *len* be ToLength(*lenValue*).
   6. ReturnIfAbrupt(*len*).
   7. Set *iterator’s* [[ArrayReverseIteratorNextIndex]] internal slot to *len*-1.
@@ -199,7 +199,7 @@ All Array Reverse Iterator Objects inherit properties from the
   3. If *O* does not have all of the internal slots of an Array Reverse Iterator Instance, throw a **TypeError** exception.
   4. Let *a* be the value of the [[IteratedObject]] internal slot of *O*.
   5. Let *index* be the value of the [[ArrayReverseIteratorNextIndex]] internal slot of *O*.
-  6. Let *lenValue* be Get(a, "length").
+  6. Let *lenValue* be Get(*a*, **"length"**).
   7. Let *len* be ToLength(*lenValue*).
   8. ReturnIfAbrupt(*len*).
   9. If *index* !== *len*-1, then throw a **TypeError** exception.
@@ -239,19 +239,19 @@ following table.
 ## String Reverse Iterator Objects
 > This section is new
 
-*TK*
+*TK* changes will mirror Array changes.
 
 
 ## Map Reverse Iterator Objects
 > This section is new
 
-*TK*
+*TK* changes will mirror Array changes.
 
 
 ## Set Reverse Iterator Objects
 > This section is new
 
-*TK*
+*TK* changes will mirror Array changes.
 
 
 
@@ -267,13 +267,13 @@ Works in Progress...
 The abstract operation CheckReverseIterable with argument *obj* performs the
 following steps:
 
- ￼1. If Type(*obj*) is not Object, then return **undefined**.
+  1. If Type(*obj*) is not Object, then return **undefined**.
   2. Return Get(*obj*, @@reverseIterator).
 
 
 
 
-# 7.4.9 CreateListIterator ( list )
+### 7.4.9 CreateListIterator ( list )
 
 The abstract operation CreateListIterator with argument list creates an Iterator (25.1.1.2) object whose next method returns the successive elements of list. It performs the following steps:
 
@@ -285,7 +285,7 @@ The abstract operation CreateListIterator with argument list creates an Iterator
 6. Let status be the result of CreateDataProperty(iterator, "next", next).
 7. Return iterator.
 
-# 7.4.9.1 ListIterator next( )
+#### 7.4.9.1 ListIterator next( )
 
 The ListIterator next method is a standard built-in function object (clause 17) that performs the following steps:
 
@@ -310,7 +310,7 @@ NOTE  A ListIterator next method will throw an exception if applied to any objec
 
 
 
-# 7.4.11 CreateListReverseIterator ( list )
+### 7.4.11 CreateListReverseIterator ( list )
 
 The abstract operation CreateListReverseIterator with argument list creates an Iterator (25.1.1.2) object whose next method returns the successive elements of list in ascending (reverse) order. It performs the following steps:
 
@@ -322,7 +322,7 @@ The abstract operation CreateListReverseIterator with argument list creates an I
 6. Let status be the result of CreateDataProperty(iterator, "next", next).
 7. Return iterator.
 
-# 7.4.11.1 ListIterator next( )
+#### 7.4.11.1 ListIterator next( )
 
 The ListIterator next method is a standard built-in function object (clause 17) that performs the following steps:
 
