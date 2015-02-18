@@ -243,9 +243,9 @@ All Array Reverse Iterator Objects inherit properties from the
   9. Set the value of the [[ArrayReverseIteratorNextIndex]] internal slot of *O* to *index*-1.
   10. If *itemKind* is **"key"**, then let *result* be *index*.
   11. Else,
-    a. Let *elementKey* be ToString(*index*).
-    b. Let *elementValue* be Get(*a*, *elementKey*).
-    c. ReturnIfAbrupt(*elementValue*).
+      a. Let *elementKey* be ToString(*index*).
+      b. Let *elementValue* be Get(*a*, *elementKey*).
+      c. ReturnIfAbrupt(*elementValue*).
   12. If *itemKind* is **"value"**, then let *result* be *elementValue*.
   13. Else,
       a. Assert *itemKind* is **"key+value"**,.
@@ -387,7 +387,7 @@ The ListIterator next method is a standard built-in function object (clause 17) 
 8. Let index be the value of the [[ListIteratorNextIndex]] internal slot of O.
 9. Let len be the number of elements of list.
 10. If index ≥ len, then
-  a. Return CreateIterResultObject(undefined, true).
+    a. Return CreateIterResultObject(undefined, true).
 11. Set the value of the [[ListIteratorNextIndex]] internal slot of O to index+1.
 12. Return CreateIterResultObject(list[index], false).
 
