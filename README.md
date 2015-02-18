@@ -273,15 +273,14 @@ All Array Reverse Iterator Objects inherit properties from the
   8. If *index* < 0, then
   9. Set the value of the [[ArrayReverseIteratorNextIndex]] internal slot of *O* to *index*-1.
   10. If *itemKind* is **"key"**, return CreateIterResultObject(*index*, **false**).
-  11. Else,
-      * a. Let *elementKey* be ToString(*index*).
-      * b. Let *elementValue* be Get(*a*, *elementKey*).
-      * c. ReturnIfAbrupt(*elementValue*).
-  12. If *itemKind* is **"value"**, let *result* be *elementValue*.
-  13. Else,
+  11. Let *elementKey* be ToString(*index*).
+  12. Let *elementValue* be Get(*a*, *elementKey*).
+  13. ReturnIfAbrupt(*elementValue*).
+  14. If *itemKind* is **"value"**, let *result* be *elementValue*.
+  15. Else,
       * a. Assert *itemKind* is **"key+value"**,.
       * b. Let *result* be CreateArrayFromList(*«index, elementValue»*).
-  14. Return CreateIterResultObject(*result*, **false**).
+  16. Return CreateIterResultObject(*result*, **false**).
 
 
 #### 22.1.X.2.2  ArrayReverseIteratorPrototype \[ @@reverseIterator ] ( )

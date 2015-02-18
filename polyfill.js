@@ -154,8 +154,9 @@ function polyfill() {
   }
 
   // 19.4.1
-  // global
-  Symbol = function(k){return k};
+  /* global */ Symbol = function (k) {
+    return k;
+  };
 
   // 19.4.2.5
   Symbol.iterator = Symbol('@@iterator');
@@ -237,12 +238,14 @@ function polyfill() {
     // 7. Let itemKind be the value of the [[ArrayIterationKind]] internal slot of O.
     var itemKind = O['[[ArrayIterationKind]]'];
 
-    // 8. Let lenValue be Get(a, "length").
-    // 9. Let len be ToLength(lenValue).
-    // 10. ReturnIfAbrupt(len).
+    // 8. If *array* has a [[TypedArrayName]] internal slot, then
+    //     * a. Let *len* be the value of the [[ArrayLength]] internal slot of *array*.
+    // 9. Else,
+    //     * a. Let *len* be ToLength(Get(*array*, **"length"**)).
+    //     * b. ReturnIfAbrupt(*len*).
     var len = a.length;
 
-    // 11. If index ≥ len, then
+    // 10. If index ≥ len, then
     if (index >= len) {
       // a. Set the value of the [[IteratedObject]] internal slot of O to undefined.
       O['[[IteratedObject]]'] = undefined;
@@ -250,42 +253,34 @@ function polyfill() {
       return CreateIterResultObject(undefined, true);
     }
 
-    // 12. Set the value of the [[ArrayIteratorNextIndex]] internal slot of O to index+1.
+    // 11. Set the value of the [[ArrayIteratorNextIndex]] internal slot of O to index+1.
     O['[[ArrayIteratorNextIndex]]'] = index + 1;
 
     var result;
 
-    // 13. If itemKind is "key", then let result be index.
+    // 12. If itemKind is "key", then return CreateIterResultObject(index, false);
     if (itemKind === 'key') {
-      result = index;
+      return CreateIterResultObject(index, false);
     }
 
-    // 14. Else,
-    else {
+    // 13. Let elementKey be ToString(index).
+    // 14. Let elementValue be Get(a, elementKey).
+    // 15. ReturnIfAbrupt(elementValue).
+    var elementValue = a[index];
 
-      // a. Let elementKey be ToString(index).
-      // b. Let elementValue be Get(a, elementKey).
-      // c. ReturnIfAbrupt(elementValue).
-      var elementValue = a[index];
+    // 16. If itemKind is "value", then let result be elementValue.
+    if (itemKind === 'value') {
+      result = elementValue;
 
-      // 15. If itemKind is "value", then let result be elementValue.
-      if (itemKind === 'value') {
-        result = elementValue;
+    // 17. Else,
+    } else {
 
-      // 16. Else,
-      } else {
-
-        // a. Assert itemKind is "key+value",.
-
-        // b. Let result be ArrayCreate(2).
-        // c. Assert: result is a new, well-formed Array object so the following operations will never fail.
-        // d. Call CreateDataProperty(result, "0", index).
-        // e. Call CreateDataProperty(result, "1", elementValue).
-        result = [index, elementValue];
-      }
+      // a. Assert itemKind is "key+value",.
+      // b. Let result be CreateArrayFromList(«index, elementValue»).
+      result = [index, elementValue];
     }
 
-    // 17. Return CreateIterResultObject(result, false).
+    // 18. Return CreateIterResultObject(result, false).
     return CreateIterResultObject(result, false);
   };
 
@@ -310,6 +305,30 @@ function polyfill() {
   //
   // NOTE  An object should implement the *ReverseIterable* interface only when it
   // also implements the *Iterable* interface.
+
+
+  // -- This property is new, added after 25.1.2.1.1
+
+
+  IteratorPrototype.reversed = function() {
+    // 1. Let *O* be the result of calling ToObject with the **this** value as its argument.
+    // 2. ReturnIfAbrupt(*O*).
+    var O = Object(this);
+
+    // 3. Let *usingReverseIterator* be GetMethod(*O*, @@reverseIterator).
+    var usingReverseIterator = O[Symbol.reverseIterator];
+
+    // 4. If *usingReverseIterator* is **undefined**, throw a **TypeError** exception.
+    if (usingReverseIterator === undefined) {
+      throw new TypeError('This iterator is not reversable.');
+    }
+
+    // 5. Let *iterator* be GetIterator(*O*, *usingReverseIterator*).
+    var iterator = GetIterator(O, usingReverseIterator);
+
+    // 6. return *iterator*.
+    return iterator;
+  };
 
 
   // -- This property is new, added after 19.4.2.5
@@ -342,50 +361,34 @@ function polyfill() {
 
   // # ArrayIteratorPrototype [ @@reverseIterator ] ( )
   ArrayIteratorPrototype[Symbol.reverseIterator] = function () {
-    // Let *O* be the **this** value.
+    // 1. Let *O* be the **this** value.
     var O = this;
 
-    // 2. If Type(O) is not Object, throw a TypeError exception.
-    if (typeof O !== 'object') {
-      throw new TypeError();
+    // 2. If Type(*O*) is not Object, throw a **TypeError** exception.
+    if (Object(O) !== O) {
+      throw new TypeError('must be called on object');
     }
 
-    // 3. If O does not have all of the internal slots of an Array Iterator Instance (22.1.5.3), throw a
-    // TypeError exception.
+    // 3. If *O* does not have all of the internal slots of an Array Iterator Instance, throw a **TypeError** exception.
 
-    // Let *a* be the value of the [[IteratedObject]] internal slot of *O*.
+    // 4. Let *a* be the value of the [[IteratedObject]] internal slot of *O*.
     var a = O['[[IteratedObject]]'];
-    // Let *index* be the value of the [[ArrayIteratorNextIndex]] internal slot of *O*.
+
+    // 5. Let *index* be the value of the [[ArrayIteratorNextIndex]] internal slot of *O*.
     var index = O['[[ArrayIteratorNextIndex]]'];
-    // If *index* !== 0, then throw a **TypeError** exception.
+
+    // 6. If *index* !== 0, then throw a **TypeError** exception.
     if (index !== 0) {
       throw new TypeError('Cannot reverse once iteration has begun.');
     }
-    // Let *itemKind* be the value of the [[ArrayIterationKind]] internal slot of *O*.
+
+    // 7. Let *itemKind* be the value of the [[ArrayIterationKind]] internal slot of *O*.
     var itemKind = O['[[ArrayIterationKind]]'];
-    // Return CreateArrayReverseIterator(*a*, *itemKind*).
+
+    // 8. Return CreateArrayReverseIterator(*a*, *itemKind*).
     return CreateArrayReverseIterator(a, itemKind);
   };
 
-
-  // -- This property is new, added after 25.1.2.1.1
-
-
-  IteratorPrototype.reversed = function() {
-    // 1. Let *O* be the result of calling ToObject with the **this** value as its argument.
-    // 2. ReturnIfAbrupt(*O*).
-    var O = Object(this);
-    // 3. Let *usingReverseIterator* be GetMethod(*O*, @@reverseIterator).
-    var usingReverseIterator = O[Symbol.reverseIterator];
-    // 4. If *usingReverseIterator* is **undefined**, throw a **TypeError** exception.
-    if (usingReverseIterator === undefined) {
-      throw new TypeError('This iterator is not reversable.');
-    }
-    // 5. Let *iterator* be GetIterator(*O*, *usingReverseIterator*).
-    var iterator = GetIterator(O, usingReverseIterator);
-    // 6. return *iterator*.
-    return iterator;
-  };
 
 
   // -- This section is new, added after 22.1.5
@@ -401,20 +404,31 @@ function polyfill() {
 
   // # CreateArrayReverseIterator Abstract Operation
   function CreateArrayReverseIterator(array, kind) {
-    // Assert: Type(*array*) is Object
-    // Let *iterator* be ObjectCreate(%ArrayIteratorPrototype%, ([[IteratedObject]], [[ArrayReverseIteratorNextIndex]], [[ArrayIterationKind]])).
+    // 1. Assert: Type(*array*) is Object
+    if (Object(array) !== array) {
+      throw new TypeError('array must be Object');
+    }
+
+    // 2. Let *iterator* be ObjectCreate(%ArrayIteratorPrototype%, ([[IteratedObject]], [[ArrayReverseIteratorNextIndex]], [[ArrayIterationKind]])).
     var iterator = Object.create(ArrayReverseIteratorPrototype);
-    // Set *iterator’s* [[IteratedObject]] internal slot to *array*.
+
+    // 3. Set *iterator’s* [[IteratedObject]] internal slot to *array*.
     iterator['[[IteratedObject]]'] = array;
-    // Let *lenValue* be Get(*array*, "length").
-    // Let *len* be ToLength(*lenValue*).
-    // ReturnIfAbrupt(*len*).
+
+    // 4. If *array* has a [[TypedArrayName]] internal slot, then
+    //     * a. Let *len* be the value of the [[ArrayLength]] internal slot of *array*.
+    // 5. Else,
+    //     * a. Let *len* be ToLength(Get(*array*, **"length"**)).
+    //     * b. ReturnIfAbrupt(*len*).
     var len = array.length;
-    // Set *iterator’s* [[ArrayReverseIteratorNextIndex]] internal slot to *len*-1.
+
+    // 6. Set *iterator’s* [[ArrayReverseIteratorNextIndex]] internal slot to *len*-1.
     iterator['[[ArrayReverseIteratorNextIndex]]'] = len - 1;
-    // Set *iterator’s* [[ArrayIteratorKind]] internal slot to *kind*.
+
+    // 7. Set *iterator’s* [[ArrayIteratorKind]] internal slot to *kind*.
     iterator['[[ArrayIterationKind]]'] = kind;
-    // Return *iterator*.
+
+    // 8. Return *iterator*.
     return iterator;
   }
 
@@ -471,47 +485,39 @@ function polyfill() {
 
     var result;
 
-    // 10. If itemKind is "key", then let result be index.
+    // 10. If itemKind is "key", return CreateIterResultObject(*index*, **false**).
     if (itemKind === 'key') {
-      result = index;
+      return CreateIterResultObject(index, false);
     }
 
-    // 11. Else,
-    else {
+    // 11. Let elementKey be ToString(index).
+    // 12. Let elementValue be Get(a, elementKey).
+    // 13. ReturnIfAbrupt(elementValue).
+    var elementValue = a[index];
 
-      // a. Let elementKey be ToString(index).
-      // b. Let elementValue be Get(a, elementKey).
-      // c. ReturnIfAbrupt(elementValue).
-      var elementValue = a[index];
+    // 14. If itemKind is "value", then let result be elementValue.
+    if (itemKind === 'value') {
+      result = elementValue;
 
-      // 12. If itemKind is "value", then let result be elementValue.
-      if (itemKind === 'value') {
-        result = elementValue;
+    // 15. Else,
+    } else {
 
-      // 13. Else,
-      } else {
-
-        // a. Assert itemKind is "key+value",.
-
-        // b. Let result be ArrayCreate(2).
-        // c. Assert: result is a new, well-formed Array object so the following operations will never fail.
-        // d. Call CreateDataProperty(result, "0", index).
-        // e. Call CreateDataProperty(result, "1", elementValue).
-        result = [index, elementValue];
-      }
+      // a. Assert *itemKind* is **"key+value"**,.
+      // b. Let *result* be CreateArrayFromList(*«index, elementValue»*).
+      result = [index, elementValue];
     }
 
-    // 14. Return CreateIterResultObject(result, false).
+    // 16. Return CreateIterResultObject(result, false).
     return CreateIterResultObject(result, false);
   };
 
 
   // # ArrayReverseIteratorPrototype [ @@reverseIterator ] ( )
   ArrayReverseIteratorPrototype[Symbol.reverseIterator] = function () {
-    // Let *O* be the **this** value.
+    // 1. Let *O* be the **this** value.
     var O = this;
 
-      // 2. If Type(O) is not Object, throw a TypeError exception.
+    // 2. If Type(O) is not Object, throw a TypeError exception.
     if (typeof O !== 'object') {
       throw new TypeError();
     }
@@ -519,27 +525,33 @@ function polyfill() {
     // 3. If O does not have all of the internal slots of an Array Iterator Instance (22.1.5.3), throw a
     // TypeError exception.
 
-    // Let *a* be the value of the [[IteratedObject]] internal slot of *O*.
+    // 4. Let *a* be the value of the [[IteratedObject]] internal slot of *O*.
     var a = O['[[IteratedObject]]'];
 
-    // Let *index* be the value of the [[ArrayReverseIteratorNextIndex]] internal slot of *O*.
+    // 5. Let *index* be the value of the [[ArrayReverseIteratorNextIndex]] internal slot of *O*.
     var index = O['[[ArrayReverseIteratorNextIndex]]'];
 
-    // Let *lenValue* be Get(a, "length").
-    // Let *len* be ToLength(*lenValue*).
-    // ReturnIfAbrupt(*len*).
+    // 6. If *a* has a [[TypedArrayName]] internal slot, then
+    //     * a. Let *len* be the value of the [[ArrayLength]] internal slot of *a*.
+    // 7. Else,
+    //     * a. Let *len* be ToLength(Get(*a*, **"length"**)).
+    //     * b. ReturnIfAbrupt(*len*).
     var len = a.length;
 
-    // If *index* !== *len*-1, then throw a **TypeError** exception.
+    // 8. If *index* !== *len*-1, then throw a **TypeError** exception.
     if (index !== len - 1) {
       throw new TypeError('Cannot reverse once iteration has begun.');
     }
 
-    // Let *itemKind* be the value of the [[ArrayIterationKind]] internal slot of *O*.
+    // 9. Let *itemKind* be the value of the [[ArrayIterationKind]] internal slot of *O*.
     var itemKind = O['[[ArrayIterationKind]]'];
 
-    // Return CreateArrayIterator(*a*, *itemKind*).
+    // 10. Return CreateArrayIterator(*a*, *itemKind*).
     return CreateArrayIterator(a, itemKind);
   };
+
+
+
+  // TODO: changes in 7.4
 
 }
