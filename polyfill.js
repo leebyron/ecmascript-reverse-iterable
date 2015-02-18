@@ -7,24 +7,14 @@ function IsCallable(argument) {
   return typeof argument === 'function';
 }
 
-// 7.4.1
-function CheckIterable(obj) {
-  // 1. If Type(*obj*) is not Object, then return **undefined**.
-  if (Object(obj) !== obj) {
-    return undefined;
-  }
-  // 2. Return Get(*obj*, @@iterator).
-  return obj[Symbol.iterator];
-}
-
 // 7.4.2
 function GetIterator(obj, method) {
   // 1. ReturnIfAbrupt(obj).
   // 2. If method was not passed, then
   if (arguments.length < 2) {
-    // a. Let method be CheckIterable(obj).
+    // a. Let method be GetMethod(obj, @@iterator).
     // b. ReturnIfAbrupt(method).
-    method = CheckIterable(obj);
+    method = obj[Symbol.iterator];
   }
   // 3. If IsCallable(method) is false, then throw a TypeError exception.
   if (IsCallable(method) === false) {
@@ -212,18 +202,6 @@ ArrayIteratorPrototype.next = function() {
 // also implements the *Iterable* interface.
 
 
-// -- This abtract operation is new, added after 7.4.2
-
-function CheckReverseIterable(obj) {
-  // 1. If Type(*obj*) is not Object, then return **undefined**.
-  if (typeof obj !== 'object') {
-    return undefined;
-  }
-  // 2. Return Get(*obj*, @@reverseIterator).
-  return obj[Symbol.reverseIterator];
-}
-
-
 // -- This property is new, added after 19.4.2.5
 
 
@@ -287,8 +265,8 @@ IteratorPrototype.reversed = function() {
   // 1. Let *O* be the result of calling ToObject with the **this** value as its argument.
   // 2. ReturnIfAbrupt(*O*).
   var O = Object(this);
-  // 3. Let *usingReverseIterator* be CheckReverseIterable(*O*).
-  var usingReverseIterator = CheckReverseIterable(O);
+  // 3. Let *usingReverseIterator* be GetMethod(*O*, @@reverseIterator).
+  var usingReverseIterator = O[Symbol.reverseIterator];
   // 4. If *usingReverseIterator* is **undefined**, throw a **TypeError** exception.
   if (usingReverseIterator === undefined) {
     throw new TypeError('This iterator is not reversable.');
@@ -498,7 +476,7 @@ console.log(revEntries.next());
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-// Illustrate example of future possible proposal which makes use of CheckReverseIterable
+// Illustrate example of future possible proposal which makes use of GetMethod(O, @@reverseIterable)
 
 IteratorPrototype.map = function(mapper, context) {
   var O = Object(this);
@@ -511,7 +489,7 @@ function CreateMappedIterator(originalIterator, mapper, context) {
   iterator['[[MappingFunction]]'] = mapper;
   iterator['[[MappingContext]]'] = context;
   iterator.next = MappedIteratorNext;
-  var reverseIterable = CheckReverseIterable(originalIterator);
+  var reverseIterable = originalIterator[Symbol.reverseIterator];
   if (reverseIterable !== undefined) {
     iterator[Symbol.reverseIterator] = MappedIteratorReversed;
   }
