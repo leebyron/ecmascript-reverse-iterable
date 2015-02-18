@@ -72,6 +72,8 @@ object which is not *ReverseIterable*. Buffering can result in difficult to
 understand performance and memory pressure in some cases and infinite buffers in
 the worst case.
 
+Specifically, Generator objects *do not* implement the *ReverseIterable* interface.
+
 For example, this code should throw a TypeError exception with a useful message:
 
 ```js
