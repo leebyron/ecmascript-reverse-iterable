@@ -138,19 +138,6 @@ The following steps are taken:
 
 
 
-## 7.4 Operations on Iterator Objects
-
-### CheckReverseIterable ( obj )
-> This abstract operation is new, added in 7.4
-
-The abstract operation CheckReverseIterable with argument *obj* performs the
-following steps:
-
-  1. If Type(*obj*) is not Object, then return **undefined**.
-  2. Return Get(*obj*, @@reverseIterator).
-
-
-
 ## 19.4.2  Properties of the Symbol Constructor
 
 ### Symbol.reverseIterator
@@ -313,16 +300,17 @@ following table.
 
 
 
-
-
-
-
-Works in Progress...
-
-
-
-
 ## 7.4 Operations on Iterator Objects
+
+### CheckReverseIterable ( obj )
+> This abstract operation is new, added in 7.4
+
+The abstract operation CheckReverseIterable with argument *obj* performs the
+following steps:
+
+  1. If Type(*obj*) is not Object, then return **undefined**.
+  2. Return Get(*obj*, @@reverseIterator).
+
 
 ### 7.4.9 CreateListIterator ( list )
 
