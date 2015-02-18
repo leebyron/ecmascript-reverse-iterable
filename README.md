@@ -110,7 +110,7 @@ as the initial value of the **Array.prototype.reversed** property.
 
 ## Array Iterator Objects
 
-### The %ArrayReverseIteratorPrototype% Object
+### The %ArrayIteratorPrototype% Object
 
 #### ArrayIteratorPrototype.reversed ( )
 > This property is new, added in 22.1.5.2
