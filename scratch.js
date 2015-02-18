@@ -391,11 +391,7 @@ ArrayReverseIteratorPrototype[Symbol.reverseIterator] =
   ArrayReverseIteratorPrototype.reversed;
 
 
-// ### CheckReverseIterable ( obj )
-//
-// The abstract operation CheckReverseIterable with argument *obj* performs the
-// following steps:
-
+// # CheckReverseIterable ( obj )
 function CheckReverseIterable(obj) {
   // 1. If Type(*obj*) is not Object, then return **undefined**.
   if (typeof obj !== 'object') {
@@ -443,6 +439,8 @@ console.log(revEntries.next());
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+
+// Illustrate example of future possible proposal which makes use of CheckReverseIterable
 
 IteratorPrototype.map = function(mapper, context) {
   var O = Object(this);

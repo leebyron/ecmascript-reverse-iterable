@@ -96,9 +96,9 @@ This property has the attributes { [[Writable]]: false, [[Enumerable]]: false, [
 ### Array.prototype.reversed ( )
 > This property is new, added in 22.1.3
 
-  1. Let O be the result of calling ToObject with the this value as its argument.
-  2. ReturnIfAbrupt(O).
-  3. Return CreateArrayReverseIterator(O, "value").
+  1. Let *O* be the result of calling ToObject with the this value as its argument.
+  2. ReturnIfAbrupt(*O*).
+  3. Return CreateArrayReverseIterator(*O*, **"value"**).
 
 ### Array.prototype \[ @@reverseIterator ] ( )
 > This property is new, added in 22.1.3
