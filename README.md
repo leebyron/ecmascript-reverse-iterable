@@ -183,7 +183,7 @@ as the initial value of the **Array.prototype.reversed** property.
 
 ### 22.1.5.2  The %ArrayIteratorPrototype% Object
 
-#### ArrayIteratorPrototype.reversed ( )
+#### ArrayIteratorPrototype \[ @@reverseIterator ] ( )
 > This property is new, added in 22.1.5.2
 
   1. Let *O* be the **this** value.
@@ -194,13 +194,6 @@ as the initial value of the **Array.prototype.reversed** property.
   6. If *index* !== 0, then throw a **TypeError** exception.
   7. Let *itemKind* be the value of the [[ArrayIterationKind]] internal slot of *O*.
   8. Return CreateArrayReverseIterator(*a*, *itemKind*).
-
-
-#### ArrayIteratorPrototype \[ @@reverseIterator ] ( )
-> This property is new, added in 22.1.5.2
-
-The initial value of the @@reverseIterator property is the same function as
-the initial value of the **ArrayIteratorPrototype.reversed** property.
 
 
 
@@ -263,7 +256,7 @@ All Array Reverse Iterator Objects inherit properties from the
   14. Return CreateIterResultObject(*result*, **false**).
 
 
-#### %ArrayReverseIteratorPrototype%.reversed ( )
+#### ArrayReverseIteratorPrototype \[ @@reverseIterator ] ( )
 
   1. Let *O* be the **this** value.
   2. If Type(*O*) is not Object, throw a **TypeError** exception.
@@ -276,12 +269,6 @@ All Array Reverse Iterator Objects inherit properties from the
   9. If *index* !== *len*-1, then throw a **TypeError** exception.
   10. Let *itemKind* be the value of the [[ArrayIterationKind]] internal slot of *O*.
   11. Return CreateArrayIterator(*a*, *itemKind*).
-
-
-#### ArrayReverseIteratorPrototype \[ @@reverseIterator ] ( )
-
-The initial value of the @@reverseIterator property is the same function as the
-initial value of the **ArrayReverseIteratorPrototype.reversed** property.
 
 
 #### %ArrayIteratorPrototype% \[ @@toStringTag ]
