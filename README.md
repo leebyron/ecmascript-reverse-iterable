@@ -26,7 +26,7 @@ forward iteration. The `for of` loop can simplify the imperative forward
 iteration to become:
 
 ```js
-for (var [i, v] of a.entries()) {
+for (let [i, v] of a.entries()) {
   doSomething(v, i);
 }
 ```
@@ -35,7 +35,7 @@ We're missing an equivalent abstraction to capture the reverse iteration. In
 this proposal, it's suggested that this can be written as:
 
 ```js
-for (var [i, v] of a.entries().reversed()) {
+for (let [i, v] of a.entries().reversed()) {
   doSomething(v, i);
 }
 ```
@@ -44,7 +44,7 @@ A simplest form, iterating through the default reverse iterator (values, in the
 case of Array) would be written as:
 
 ```js
-for (var v of a.reversed()) {
+for (let v of a.reversed()) {
   doSomething(v);
 }
 ```
