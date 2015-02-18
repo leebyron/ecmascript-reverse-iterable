@@ -62,13 +62,15 @@ iterable and use that to it's advantage.
 
 ## FAQ
 
-**What happens if `reversed()` is called on something not easily reversed, like a Generator function?**
+**What happens if `reversed()` is called on something not easily reversed, like
+a Generator function?**
 
-This proposal suggests one-way iterables remain one-way. There is no buffering
-in the native implementation of `%IteratorPrototype%.reverse()` when called on a
-non *ReverseIterable*. Buffering can result in difficult to understand
-performance and memory pressure in some cases and infinite buffers in the
-worst case.
+This proposal suggests one-way iterables remain one-way. Objects which implement
+*Iterable* do not also have to implement *ReverseIterable*. There is no buffering
+in the native implementation of `%IteratorPrototype%.reverse()` when called on an
+object which is not *ReverseIterable*. Buffering can result in difficult to
+understand performance and memory pressure in some cases and infinite buffers in
+the worst case.
 
 For example, this code should throw a TypeError exception with a useful message:
 
@@ -97,13 +99,13 @@ There are a few other approaches we could take worth discussing.
 #### `reverse()` instead of `reversed()`
 
 In this alternative, we rename the method on **%IteratorPrototype%** from
-`reversed` to `reverse`. There is already a method called `reverse` on
+**reversed** to **reverse**. There is already a method called **reverse** on
 **Array.prototype**, so we the proposed functionality is not added to
 **Array.prototype** at all.
 
 Pros:
 
-  * No potential confusion between `reverse()` and `reversed()` on **Array.prototype**.
+  * No potential confusion between **reverse()** and **reversed()** on **Array.prototype**.
   * Good parallel between **Array.prototype.reverse** and **%IteratorPrototype%.reverse**.
     The story is that `reverse` should return a similar type of thing as the `this` context.
 
@@ -121,13 +123,13 @@ the existence of **reversed** to mark the *ReverseIterable* interface.
 Pros:
 
   * Fewer pieces to implement for a useful *ReverseIterable* implementation.
-  * If **reversed** exists, you can call it.
+  * If **reversed** exists, you can call it without TypeError.
 
 Cons:
 
-  * `reversed` could be too common of a property name in user-land to make this
+  * **reversed** could be too common of a property name in user-land to make this
     distinction in spec.
-  * If you call `reversed()` on a non ReverseIterable, you get a less clear
+  * If you call **reversed()** on a non ReverseIterable, you get a less clear
     exception message concerning calling undefined as a function.
 
 
@@ -182,7 +184,7 @@ The following steps are taken:
 
 The initial value of Symbol.reverseIterator is the well known symbol @@reverseIterator (Table 1).
 
-This property has the attributes { [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]: false }
+This property has the attributes { [[Writable]]: **false**, [[Enumerable]]: **false**, [[Configurable]]: **false** }
 
 
 
@@ -267,16 +269,16 @@ All Array Reverse Iterator Objects inherit properties from the
   9. Set the value of the [[ArrayReverseIteratorNextIndex]] internal slot of *O* to *index*-1.
   10. If *itemKind* is **"key"**, then let *result* be *index*.
   11. Else,
-      a. Let *elementKey* be ToString(*index*).
-      b. Let *elementValue* be Get(*a*, *elementKey*).
-      c. ReturnIfAbrupt(*elementValue*).
+      * a. Let *elementKey* be ToString(*index*).
+      * b. Let *elementValue* be Get(*a*, *elementKey*).
+      * c. ReturnIfAbrupt(*elementValue*).
   12. If *itemKind* is **"value"**, then let *result* be *elementValue*.
   13. Else,
-      a. Assert *itemKind* is **"key+value"**,.
-      b. Let *result* be ArrayCreate(2).
-      c. Assert: *result* is a new, well-formed Array object so the following operations will never fail.
-      d. Call CreateDataProperty(*result*, **"0"**, *index*).
-      e. Call CreateDataProperty(*result*, **"1"**, *elementValue*).
+      * a. Assert *itemKind* is **"key+value"**,.
+      * b. Let *result* be ArrayCreate(2).
+      * c. Assert: *result* is a new, well-formed Array object so the following operations will never fail.
+      * d. Call CreateDataProperty(*result*, **"0"**, *index*).
+      * e. Call CreateDataProperty(*result*, **"1"**, *elementValue*).
   14. Return CreateIterResultObject(*result*, **false**).
 
 
@@ -407,7 +409,7 @@ The ListReverseIterator **next** method is a standard built-in function object (
   7. Let *list* be the value of the [[IteratedList]] internal slot of *O*.
   8. Let *index* be the value of the [[ListReverseIteratorNextIndex]] internal slot of *O*.
   10. If *index* < 0, then
-      a. Return CreateIterResultObject(**undefined**, **true**).
+      * a. Return CreateIterResultObject(**undefined**, **true**).
   11. Set the value of the [[ListReverseIteratorNextIndex]] internal slot of *O* to *index*-1.
   12. Return CreateIterResultObject(*list*[*index*], **false**).
 
@@ -439,8 +441,8 @@ that performs the following steps:
      > This step is new.
   9. If *usingReverseIterator1* is not **undefined** and *usingReverseIterator2* is not **undefined**.
      > This step is new.
-      a. Let *reversed* be a new built-in function object as defined in CompoundIterator **reversed**.
-      b. Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]:*reversed*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).
+      * a. Let *reversed* be a new built-in function object as defined in CompoundIterator **reversed**.
+      * b. Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]:*reversed*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).
   10. Let *status* be the result of CreateDataProperty(iterator, **"next"**, *next*).
   11. Return *iterator*.
 
