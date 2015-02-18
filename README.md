@@ -60,8 +60,38 @@ interface allows arbitrary code to detect that a particular object is reverse
 iterable and use that to it's advantage.
 
 
+## FAQ
 
-# Alternatives
+#### What happens if `reversed()` is called on something not easily reversed,
+like a Generator function?
+
+This proposal suggests one-way iterables remain one-way. There is no buffering
+in the native implementation of `%IteratorPrototype%.reverse()` when called on a
+non *ReverseIterable*. Buffering can result in difficult to understand
+performance and memory pressure in some cases and infinite buffers in the
+worst case.
+
+For example, this code should throw a TypeError exception with a useful message:
+
+```js
+function* fib () {
+  var n1 = 1, n2 = 0;
+  [n1, n2] = [n1 + n2, n1];
+  yield n1;
+}
+
+try {
+  let fibs = fib();
+  for (let num of fibs.reversed()) {
+    console.log(num);
+  }
+} catch (e) {
+  assert(e.message === "This iterator is not reversable.");
+}
+```
+
+
+## Alternatives
 
 There are a few other approaches we could take worth discussing.
 

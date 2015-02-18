@@ -291,7 +291,7 @@ IteratorPrototype.reversed = function() {
   var usingReverseIterator = CheckReverseIterable(O);
   // 4. If *usingReverseIterator* is **undefined**, throw a **TypeError** exception.
   if (usingReverseIterator === undefined) {
-    throw new TypeError('This iterator is not reversable');
+    throw new TypeError('This iterator is not reversable.');
   }
   // 5. Let *iterator* be GetIterator(*O*, *usingReverseIterator*).
   var iterator = GetIterator(O, usingReverseIterator);
