@@ -355,7 +355,7 @@ following table.
   4. Let *next* be a new built-in function object as defined in ListIterator **next** (7.4.9.1).
   5. Set *iterator’s* [[IteratorNext]] internal slot to *next*.
   6. Let *reversed* be a new built-in function object as defined in ListIterator **reversed**.
-  7. Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]:*reversed*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).
+  7. Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]: *reversed*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).
   8. Let *status* be CreateDataProperty(iterator, **"next"**, *next*).
   9. Return *iterator*.
 
@@ -385,7 +385,7 @@ list in ascending (reverse) order. It performs the following steps:
   5. Let *next* be a new built-in function object as defined in ListReverseIterator **next**.
   6. Set *iterator’s* [[IteratorNext]] internal slot to *next*.
   7. Let *reversed* be a new built-in function object as defined in ListReverseIterator **reversed**.
-  8. Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]:*reversed*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).
+  8. Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]: *reversed*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).
   9. Let *status* be CreateDataProperty(*iterator*, **"next"**, *next*).
   10. Return *iterator*.
 
@@ -432,7 +432,7 @@ that performs the following steps:
   8. Let *usingReverseIterator2* be GetMethod(*iterator2*, @@reverseIterator).
   9. If *usingReverseIterator1* is not **undefined** and *usingReverseIterator2* is not **undefined**.
       * a. Let *reversed* be a new built-in function object as defined in CompoundIterator **reversed**.
-      * b. Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]:*reversed*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).
+      * b. Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]: *reversed*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).
   10. Let *status* be CreateDataProperty(iterator, **"next"**, *next*).
   11. Return *iterator*.
 
