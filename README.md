@@ -322,74 +322,79 @@ Works in Progress...
 
 
 
-
+## 7.4 Operations on Iterator Objects
 
 ### 7.4.9 CreateListIterator ( list )
 
 The abstract operation CreateListIterator with argument list creates an Iterator (25.1.1.2) object whose next method returns the successive elements of list. It performs the following steps:
 
-1. Let iterator be ObjectCreate(%IteratorPrototype%, ([[IteratorNext]], [[IteratedList]], [[ListIteratorNextIndex]])).
-2. Set iterator’s [[IteratedList]] internal slot to list.
-3. Set iterator’s [[ListIteratorNextIndex]] internal slot to 0.
-4. Let next be a new built-in function object as defined in ListIterator next (7.4.9.1).
-5. Set iterator’s [[IteratorNext]] internal slot to next.
-6. Let status be the result of CreateDataProperty(iterator, "next", next).
-7. Return iterator.
+  1. Let *iterator* be ObjectCreate(%IteratorPrototype%, ([[IteratorNext]], [[IteratedList]], [[ListIteratorNextIndex]])).
+  2. Set *iterator’s* [[IteratedList]] internal slot to *list*.
+  3. Set *iterator’s* [[ListIteratorNextIndex]] internal slot to 0.
+  4. Let *next* be a new built-in function object as defined in ListIterator **next** (7.4.9.1).
+  5. Set *iterator’s* [[IteratorNext]] internal slot to *next*.
+  6. Let *reversed* be a new built-in function object as defined in ListIterator **reversed**.
+     > This step is new.
+  7. Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]:*reversed*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).
+     > This step is new.
+  8. Let *status* be the result of CreateDataProperty(iterator, **"next"**, *next*).
+  9. Return *iterator*.
 
-#### 7.4.9.1 ListIterator next( )
+#### ListIterator reversed ( )
+> This method is new, added in 7.4.9
 
-The ListIterator next method is a standard built-in function object (clause 17) that performs the following steps:
+The ListIterator **reversed** method is a standard built-in function object (clause 17)
+that performs the following steps:
 
-1. Let O be the **this** value.
-2. Let f be the active function object.
-3. If O does not have a [[IteratorNext]] internal slot, then throw a TypeError exception.
-4. Let next be the value of the [[IteratorNext]] internal slot of O.
-5. If SameValue(f, next) is false, then throw a TypeError exception.
-6. If O does not have a [[IteratedList]] internal slot, then throw a TypeError exception.
-7. Let list be the value of the [[IteratedList]] internal slot of O.
-8. Let index be the value of the [[ListIteratorNextIndex]] internal slot of O.
-9. Let len be the number of elements of list.
-10. If index ≥ len, then
-  a. Return CreateIterResultObject(undefined, true).
-11. Set the value of the [[ListIteratorNextIndex]] internal slot of O to index+1.
-12. Return CreateIterResultObject(list[index], false).
-
-NOTE  A ListIterator next method will throw an exception if applied to any object other than the one with which it was originally associated.
+  1. Let *O* be the **this** value.
+  2. If *O* does not have a [[IteratorList]] internal slot, then throw a **TypeError** exception.
+  3. Let *list* be the value of the [[IteratorList]] internal slot of *O*.
+  4. Return CreateListReverseIterator(*list*).
 
 
+### CreateListReverseIterator ( list )
+> This abstract operation and section is new, added in 7.4
 
+The abstract operation CreateListReverseIterator with argument list creates an
+Iterator (25.1.1.2) object whose next method returns the successive elements of
+list in ascending (reverse) order. It performs the following steps:
 
+  1. Let *iterator* be ObjectCreate(%IteratorPrototype%, ([[IteratorNext]], [[IteratedList]], [[ListReverseIteratorNextIndex]])).
+  2. Set *iterator’s* [[IteratedList]] internal slot to *list*.
+  3. Let *len* be the number of elements of *list*.
+  4. Set *iterator’s* [[ListReverseIteratorNextIndex]] internal slot to *len*-1.
+  5. Let *next* be a new built-in function object as defined in ListReverseIterator **next**.
+  6. Set *iterator’s* [[IteratorNext]] internal slot to *next*.
+  7. Let *reversed* be a new built-in function object as defined in ListReverseIterator **reversed**.
+  8. Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]:*reversed*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).
+  9. Let *status* be the result of CreateDataProperty(*iterator*, **"next"**, *next*).
+  10. Return *iterator*.
 
+#### ListReverseIterator next ( )
 
-### 7.4.11 CreateListReverseIterator ( list )
+The ListReverseIterator **next** method is a standard built-in function object (clause 17) that performs the following steps:
 
-The abstract operation CreateListReverseIterator with argument list creates an Iterator (25.1.1.2) object whose next method returns the successive elements of list in ascending (reverse) order. It performs the following steps:
+  1. Let *O* be the **this** value.
+  2. Let *f* be the active function object.
+  3. If *O* does not have a [[IteratorNext]] internal slot, then throw a **TypeError** exception.
+  4. Let *next* be the value of the [[IteratorNext]] internal slot of *O*.
+  5. If SameValue(*f*, *next*) is **false**, then throw a **TypeError** exception.
+  6. If *O* does not have a [[IteratedList]] internal slot, then throw a **TypeError** exception.
+  7. Let *list* be the value of the [[IteratedList]] internal slot of *O*.
+  8. Let *index* be the value of the [[ListReverseIteratorNextIndex]] internal slot of *O*.
+  10. If *index* < 0, then
+      a. Return CreateIterResultObject(**undefined**, **true**).
+  11. Set the value of the [[ListReverseIteratorNextIndex]] internal slot of *O* to *index*-1.
+  12. Return CreateIterResultObject(*list*[*index*], **false**).
 
-1. Let *iterator* be ObjectCreate(%IteratorPrototype%, ([[IteratorNext]], [[IteratedList]], [[ListReverseIteratorNextIndex]])).
-2. Set iterator’s [[IteratedList]] internal slot to list.
-3. Set iterator’s [[ListReverseIteratorNextIndex]] internal slot to 0.
-4. Let next be a new built-in function object as defined in ListIterator next (7.4.9.1).
-5. Set iterator’s [[IteratorNext]] internal slot to next.
-6. Let status be the result of CreateDataProperty(iterator, "next", next).
-7. Return iterator.
+NOTE  A ListReverseIterator **next** method will throw an exception if applied to any object other than the one with which it was originally associated.
 
-#### 7.4.11.1 ListIterator next( )
+#### ListReverseIterator reversed ( )
 
-The ListIterator next method is a standard built-in function object (clause 17) that performs the following steps:
+The ListReverseIterator **reversed** method is a standard built-in function object (clause 17)
+that performs the following steps:
 
-1. Let O be the **this** value.
-2. Let f be the active function object.
-3. If O does not have a [[IteratorNext]] internal slot, then throw a TypeError exception.
-4. Let next be the value of the [[IteratorNext]] internal slot of O.
-5. If SameValue(f, next) is false, then throw a TypeError exception.
-6. If O does not have a [[IteratedList]] internal slot, then throw a TypeError exception.
-7. Let list be the value of the [[IteratedList]] internal slot of O.
-8. Let index be the value of the [[ListIteratorNextIndex]] internal slot of O.
-9. Let len be the number of elements of list.
-10. If index ≥ len, then
-    a. Return CreateIterResultObject(undefined, true).
-11. Set the value of the [[ListIteratorNextIndex]] internal slot of O to index+1.
-12. Return CreateIterResultObject(list[index], false).
-
-NOTE  A ListIterator next method will throw an exception if applied to any object other than the one with which it was originally associated.
-
+  1. Let *O* be the **this** value.
+  2. If *O* does not have a [[IteratorList]] internal slot, then throw a **TypeError** exception.
+  3. Let *list* be the value of the [[IteratorList]] internal slot of *O*.
+  4. Return CreateListIterator(*list*).
