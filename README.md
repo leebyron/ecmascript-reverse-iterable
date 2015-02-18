@@ -203,7 +203,7 @@ All Array Reverse Iterator Objects inherit properties from the
   8. ReturnIfAbrupt(*len*).
   9. If *index* !== *len*-1, then throw a **TypeError** exception.
   10. Let *itemKind* be the value of the [[ArrayIterationKind]] internal slot of *O*.
-  11. Return CreateArrayReverseIterator(*a*, *itemKind*).
+  11. Return CreateArrayIterator(*a*, *itemKind*).
 
 
 #### ArrayReverseIteratorPrototype \[ @@reverseIterator ] ( )

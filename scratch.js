@@ -3,8 +3,8 @@
 // relevant to the proposal in order to produce meaningful examples.
 
 // 7.4.8
-function CreateIterResultObject(result, done) {
-  return { result: result, done: done };
+function CreateIterResultObject(value, done) {
+  return { value: value, done: done };
 }
 
 // 19.4.1
@@ -252,7 +252,7 @@ function CreateArrayReverseIterator(array, kind) {
   // ReturnIfAbrupt(*len*).
   var len = array.length;
   // Set *iterator’s* [[ArrayReverseIteratorNextIndex]] internal slot to *len*-1.
-  iterator['[[ArrayReveseIteratorNextIndex]]'] = len - 1;
+  iterator['[[ArrayReverseIteratorNextIndex]]'] = len - 1;
   // Set *iterator’s* [[ArrayIteratorKind]] internal slot to *kind*.
   iterator['[[ArrayIterationKind]]'] = kind;
   // Return *iterator*.
@@ -294,7 +294,7 @@ ArrayReverseIteratorPrototype.next = function () {
   }
 
   // 6. Let index be the value of the [[ArrayReverseIteratorNextIndex]] internal slot of O.
-  var index = O['[[ArrayReveseIteratorNextIndex]]'];
+  var index = O['[[ArrayReverseIteratorNextIndex]]'];
 
   // 7. Let itemKind be the value of the [[ArrayIterationKind]] internal slot of O.
   var itemKind = O['[[ArrayIterationKind]]'];
@@ -308,7 +308,7 @@ ArrayReverseIteratorPrototype.next = function () {
   }
 
   // 9. Set the value of the [[ArrayReverseIteratorNextIndex]] internal slot of O to index-1.
-  O['[[ArrayReveseIteratorNextIndex]]'] = index - 1;
+  O['[[ArrayReverseIteratorNextIndex]]'] = index - 1;
 
   var result;
 
@@ -379,8 +379,8 @@ ArrayReverseIteratorPrototype.reversed = function () {
   // Let *itemKind* be the value of the [[ArrayIterationKind]] internal slot of *O*.
   var itemKind = O['[[ArrayIterationKind]]'];
 
-  // Return CreateArrayReverseIterator(*a*, *itemKind*).
-  return CreateArrayReverseIterator(a, itemKind);
+  // Return CreateArrayIterator(*a*, *itemKind*).
+  return CreateArrayIterator(a, itemKind);
 };
 
 
@@ -391,6 +391,19 @@ ArrayReverseIteratorPrototype[Symbol.reverseIterator] =
   ArrayReverseIteratorPrototype.reversed;
 
 
+// ### CheckReverseIterable ( obj )
+//
+// The abstract operation CheckReverseIterable with argument *obj* performs the
+// following steps:
+
+function CheckReverseIterable(obj) {
+  // 1. If Type(*obj*) is not Object, then return **undefined**.
+  if (typeof obj !== 'object') {
+    return undefined;
+  }
+  // 2. Return Get(*obj*, @@reverseIterator).
+  return obj[Symbol.reverseIterator];
+}
 
 
 
@@ -422,3 +435,72 @@ console.log(revEntries.next());
 console.log(revEntries.next());
 console.log(revEntries.next());
 console.log(revEntries.next());
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+IteratorPrototype.map = function(mapper, context) {
+  var O = Object(this);
+  return CreateMappedIterator(O, mapper, context);
+};
+
+function CreateMappedIterator(originalIterator, mapper, context) {
+  var iterator = Object.create(ArrayReverseIteratorPrototype);
+  iterator['[[OriginalIterator]]'] = originalIterator;
+  iterator['[[MappingFunction]]'] = mapper;
+  iterator['[[MappingContext]]'] = context;
+  iterator.next = MappedIteratorNext;
+  var reverseIterable = CheckReverseIterable(originalIterator);
+  if (reverseIterable !== undefined) {
+    iterator.reversed = MappedIteratorReversed;
+    iterator[Symbol.reverseIterator] = MappedIteratorReversed;
+  }
+  return iterator;
+}
+
+function MappedIteratorNext() {
+  var O = Object(this);
+  var iterator = O['[[OriginalIterator]]'];
+  if (iterator === undefined) {
+    return CreateIterResultObject(undefined, true);
+  }
+  var nextFn = iterator.next;
+  var result = nextFn.apply(iterator, arguments);
+  if (result.done) {
+    O['[[OriginalIterator]]'] = undefined;
+    O['[[MappingFunction]]'] = undefined;
+    O['[[MappingContext]]'] = undefined;
+    return result;
+  }
+  var mapper = O['[[MappingFunction]]'];
+  var context = O['[[MappingContext]]'];
+  var originalValue = result.value;
+  var value = mapper.call(context, originalValue);
+  return CreateIterResultObject(value, false);
+}
+
+function MappedIteratorReversed() {
+  var O = Object(this);
+  var iterator = O['[[OriginalIterator]]'];
+  var reverseIterator = iterator[Symbol.reverseIterator](); // GetIterator(iterator, iterator[Symbol.reverseIterator]);
+  var mapper = O['[[MappingFunction]]'];
+  var context = O['[[MappingContext]]'];
+  return CreateMappedIterator(reverseIterator, mapper, context);
+}
+
+
+var array = ['A','B','C'];
+
+var rev = array.reversed().map(function (l) { return l + l; }).reversed().reversed();
+console.log(rev);
+console.log(rev.next());
+console.log(rev.next());
+console.log(rev.next());
+console.log(rev.next());
+console.log(rev.next());
+console.log(rev);
