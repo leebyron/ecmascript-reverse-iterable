@@ -313,8 +313,7 @@ following steps:
 
 
 ### 7.4.9 CreateListIterator ( list )
-
-The abstract operation CreateListIterator with argument list creates an Iterator (25.1.1.2) object whose next method returns the successive elements of list. It performs the following steps:
+> This existing abstract operation has had 2 new steps added.
 
   1. Let *iterator* be ObjectCreate(%IteratorPrototype%, ([[IteratorNext]], [[IteratedList]], [[ListIteratorNextIndex]])).
   2. Set *iterator’s* [[IteratedList]] internal slot to *list*.
@@ -386,3 +385,38 @@ that performs the following steps:
   2. If *O* does not have a [[IteratorList]] internal slot, then throw a **TypeError** exception.
   3. Let *list* be the value of the [[IteratorList]] internal slot of *O*.
   4. Return CreateListIterator(*list*).
+
+
+### 7.4.10 CreateCompoundIterator ( iterator1, iterator2 )
+> This existing abstract operation has had 2 new steps added.
+
+  1. Let *iterator* be ObjectCreate(%IteratorPrototype%, ([[Iterator1]], [[Iterator2]], [[State]], [[IteratorNext]])).
+  2. Set *iterator’s* [[Iterator1]] internal slot to *iterator1*.
+  3. Set *iterator’s* [[Iterator2]] internal slot to *iterator2*.
+  4. Set *iterator’s* [[State]] internal slot to 1.
+  5. Let *next* be a new built-in function object as defined in CompoundIterator **next** (7.4.10.1).
+  6. Set *iterator’s* [[IteratorNext]] internal slot to *next*.
+  7. Let *reversed* be a new built-in function object as defined in CompoundIterator **reversed**.
+     > This step is new.
+  8. Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]:*reversed*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).
+     > This step is new.
+  9. Let *status* be the result of CreateDataProperty(iterator, **"next"**, *next*).
+  10. Return *iterator*.
+
+#### CompoundIterator reversed ( )
+> This method is new, added in 7.4.10
+
+The CompoundIterator **reversed** method is a standard built-in function object (clause 17)
+that performs the following steps:
+
+  1. Let *O* be the **this** value.
+  2. If *O* does not have [[Iterator1]] and [[Iterator2]] internal slots, then throw a **TypeError** exception.
+  3. Let *iterator1* be the value of the [[Iterator1] internal slot of *O*.
+  4. Let *iterator2* be the value of the [[Iterator2] internal slot of *O*.
+  5. Let *usingReverseIterator1* be CheckReverseIterable(*iterator1*).
+  6. If *usingReverseIterator1* is **undefined**, throw a **TypeError** exception.
+  7. Let *reverseIterator1* be GetIterator(*O*, *usingReverseIterator1*).
+  8. Let *usingReverseIterator2* be CheckReverseIterable(*iterator2*).
+  9. If *usingReverseIterator2* is **undefined**, throw a **TypeError** exception.
+  10. Let *reverseIterator2* be GetIterator(*O*, *usingReverseIterator2*).
+  11. Return CreateCompoundIterator(reverseIterator2, reverseIterator1).
