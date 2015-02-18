@@ -40,7 +40,7 @@ for (let [i, v] of a.entries().reversed()) {
 }
 ```
 
-A simplest form, iterating through the default reverse iterator (values, in the
+A simpler form, iterating through the default reverse iterator (values, in the
 case of Array) would be written as:
 
 ```js
