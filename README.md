@@ -1,7 +1,5 @@
 # The *ReverseIterable* Interface
 
-Spec proposal for ECMA-262
-
 **Stage:** 0, Strawman
 
 **Author:** Lee Byron
