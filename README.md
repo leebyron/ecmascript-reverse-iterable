@@ -115,7 +115,7 @@ The *ReverseIterable* interface includes the following property:
 
 | Property | Value | Requirements |
 | -------- | ----- | ------------ |
-| @@reverseIterator | A function that returns an Iterator object. | The returned object must conform to the *Iterator* interface. It must iterate through values in the reverse order of the object returned from the `@@iterator` function. |
+| @@reverseIterator | A function that returns an Iterator object. | The returned object must conform to the *Iterator* interface. It must iterate through values in the reverse order of the object returned from the `@@iterator` method. |
 
 NOTE  An object should implement the *ReverseIterable* interface only when it
 also implements the *Iterable* interface.
@@ -305,8 +305,8 @@ following table.
   3. Set *iterator’s* [[ListIteratorNextIndex]] internal slot to 0.
   4. Let *next* be a new built-in function object as defined in ListIterator **next** (7.4.9.1).
   5. Set *iterator’s* [[IteratorNext]] internal slot to *next*.
-  6. Let *reverse* be a new built-in function object as defined in ListIterator **reverse**.
-  7. Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]: *reverse*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).
+  6. <ins>Let *reverse* be a new built-in function object as defined in ListIterator **reverse**.</ins>
+  7. <ins>Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]: *reverse*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).</ins>
   8. Let *status* be CreateDataProperty(iterator, **"next"**, *next*).
   9. Return *iterator*.
 
@@ -379,11 +379,11 @@ that performs the following steps:
   4. Set *iterator’s* [[State]] internal slot to 1.
   5. Let *next* be a new built-in function object as defined in CompoundIterator **next** (7.4.10.1).
   6. Set *iterator’s* [[IteratorNext]] internal slot to *next*.
-  7. Let *usingReverseIterator1* be GetMethod(*iterator1*, @@reverseIterator).
-  8. Let *usingReverseIterator2* be GetMethod(*iterator2*, @@reverseIterator).
-  9. If *usingReverseIterator1* is not **undefined** and *usingReverseIterator2* is not **undefined**.
-      * a. Let *reverse* be a new built-in function object as defined in CompoundIterator **reverse**.
-      * b. Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]: *reverse*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).
+  7. <ins>Let *usingReverseIterator1* be GetMethod(*iterator1*, @@reverseIterator).</ins>
+  8. <ins>Let *usingReverseIterator2* be GetMethod(*iterator2*, @@reverseIterator).</ins>
+  9. <ins>If *usingReverseIterator1* is not **undefined** and *usingReverseIterator2* is not **undefined**.</ins>
+      * a. <ins>Let *reverse* be a new built-in function object as defined in CompoundIterator **reverse**.</ins>
+      * b. <ins>Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]: *reverse*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).</ins>
   10. Let *status* be CreateDataProperty(iterator, **"next"**, *next*).
   11. Return *iterator*.
 
