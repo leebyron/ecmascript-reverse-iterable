@@ -121,6 +121,28 @@ function polyfill() {
     return typeof argument === 'function';
   }
 
+  // 7.3.7
+  function GetMethod(O, P) {
+    // 1. Assert: Type(O) is Object.
+    if (Object(O) !== O) {
+      throw new TypeError();
+    }
+    // 2. Assert: IsPropertyKey(P) is true.
+    // 3. Let func be the result of calling the [[Get]] internal method of O passing P and O as the arguments.
+    // 4. ReturnIfAbrupt(func).
+    var func = O[P];
+    // 5. If func is either undefined or null, then return undefined.
+    if (func === undefined || func === null) {
+      return undefined;
+    }
+    // 6. If IsCallable(func) is false, then throw a TypeError exception.
+    if (IsCallable(func) === false) {
+      throw new TypeError();
+    }
+    // 7. Return func.
+    return func;
+  }
+
   // 7.4.2
   function GetIterator(obj, method) {
     // 1. ReturnIfAbrupt(obj).
@@ -128,7 +150,7 @@ function polyfill() {
     if (arguments.length < 2) {
       // a. Let method be GetMethod(obj, @@iterator).
       // b. ReturnIfAbrupt(method).
-      method = obj[Symbol.iterator];
+      method = GetMethod(obj, Symbol.iterator);
     }
     // 3. If IsCallable(method) is false, then throw a TypeError exception.
     if (IsCallable(method) === false) {
@@ -319,11 +341,11 @@ function polyfill() {
     var O = Object(this);
 
     // 3. Let *usingReverseIterator* be GetMethod(*O*, @@reverseIterator).
-    var usingReverseIterator = O[Symbol.reverseIterator];
+    var usingReverseIterator = GetMethod(O, Symbol.reverseIterator);
 
     // 4. If *usingReverseIterator* is **undefined**, throw a **TypeError** exception.
     if (usingReverseIterator === undefined) {
-      throw new TypeError('This iterator is not reversable.');
+      throw new TypeError('Iterator is not reversable.');
     }
 
     // 5. Let *iterator* be GetIterator(*O*, *usingReverseIterator*).

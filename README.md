@@ -67,13 +67,14 @@ a Generator function?**
 This proposal suggests one-way iterables remain one-way. Objects which implement
 *Iterable* do not also have to implement *ReverseIterable*. There is no buffering
 in the native implementation of `%IteratorPrototype%.reverse()` when called on an
-object which is not *ReverseIterable*. Buffering can result in difficult to
-understand performance and memory pressure in some cases and infinite buffers in
-the worst case.
+object which is not *ReverseIterable*, instead a TypeError exception is thrown.
+
+Buffering can result in difficult to understand performance and memory pressure
+in some cases and infinite buffers in the worst case.
 
 Specifically, Generator objects *do not* implement the *ReverseIterable* interface.
 
-For example, this code should throw a TypeError exception with a useful message:
+For example, this code will throw a TypeError exception with a useful message:
 
 ```js
 function* fib () {
@@ -88,7 +89,7 @@ try {
     console.log(num);
   }
 } catch (e) {
-  assert(e.message === "This iterator is not reversable.");
+  assert(e.message === "Iterator is not reversable.");
 }
 ```
 
