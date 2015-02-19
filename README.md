@@ -78,9 +78,9 @@ For example, this code will throw a TypeError exception with a useful message:
 
 ```js
 function* fib () {
-  var n1 = 1, n2 = 0;
-  [n1, n2] = [n1 + n2, n1];
+  var n1 = 0, n2 = 1;
   yield n1;
+  [n1, n2] = [n2, n1 + n2];
 }
 
 try {
