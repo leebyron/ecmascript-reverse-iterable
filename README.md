@@ -67,7 +67,7 @@ a Generator function?**
 
 This proposal suggests one-way iterables remain one-way. Objects which implement
 *Iterable* do not also have to implement *ReverseIterable*. There is no buffering
-in the native implementation of `%IteratorPrototype%.reverse()` when called on an
+in the native implementation of `%IteratorPrototype%.reversed()` when called on an
 object which is not *ReverseIterable*. Buffering can result in difficult to
 understand performance and memory pressure in some cases and infinite buffers in
 the worst case.
