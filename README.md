@@ -378,7 +378,7 @@ that performs the following steps:
 
 The abstract operation CreateListReverseIterator with argument list creates an
 Iterator (25.1.1.2) object whose next method returns the successive elements of
-list in ascending (reverse) order. It performs the following steps:
+list in descending (reversed) order. It performs the following steps:
 
   1. Let *iterator* be ObjectCreate(%IteratorPrototype%, ([[IteratorNext]], [[IteratedList]], [[ListReverseIteratorNextIndex]])).
   2. Set *iterator’s* [[IteratedList]] internal slot to *list*.
