@@ -35,16 +35,15 @@ We're missing an equivalent abstraction to capture the reverse iteration. In
 this proposal, it's suggested that this can be written as:
 
 ```js
-for (let [i, v] of a.entries().reversed()) {
+for (let [i, v] of a.entries().reverse()) {
   doSomething(v, i);
 }
 ```
 
-A simpler form, iterating through the default reverse iterator (values, in the
-case of Array) would be written as:
+A default reverse iterator can also be retrieved similarly to a default iterator:
 
 ```js
-for (let v of a.reversed()) {
+for (let v of a[Symbol.reverseIterator]()) {
   doSomething(v);
 }
 ```
@@ -53,7 +52,7 @@ for (let v of a.reversed()) {
 This syntax has the benefit of not introducing new syntactical concepts but
 instead just adds a few function properties to iterator prototypes.
 
-In addition to the pattern of using `reversed()`, this proposal also suggests the
+In addition to the `reverse()` method, this proposal also suggests the
 addition of a *ReverseIterable* interface which any object can implement by
 adding a function to the `Symbol.reverseIterator` property. Capturing this in an
 interface allows arbitrary code to detect that a particular object is reverse
@@ -62,12 +61,12 @@ iterable and use that to it's advantage.
 
 ## FAQ
 
-**What happens if `reversed()` is called on something not easily reversed, like
+**What happens if `reverse()` is called on something not easily reversed, like
 a Generator function?**
 
 This proposal suggests one-way iterables remain one-way. Objects which implement
 *Iterable* do not also have to implement *ReverseIterable*. There is no buffering
-in the native implementation of `%IteratorPrototype%.reversed()` when called on an
+in the native implementation of `%IteratorPrototype%.reverse()` when called on an
 object which is not *ReverseIterable*. Buffering can result in difficult to
 understand performance and memory pressure in some cases and infinite buffers in
 the worst case.
@@ -85,57 +84,13 @@ function* fib () {
 
 try {
   let fibs = fib();
-  for (let num of fibs.reversed()) {
+  for (let num of fibs.reverse()) {
     console.log(num);
   }
 } catch (e) {
   assert(e.message === "This iterator is not reversable.");
 }
 ```
-
-
-## Alternatives
-
-There are a few other approaches we could take worth discussing.
-
-#### `reverse()` instead of `reversed()`
-
-In this alternative, we rename the method on **%IteratorPrototype%** from
-**reversed** to **reverse**. There is already a method called **reverse** on
-**Array.prototype**, so we the proposed functionality is not added to
-**Array.prototype** at all.
-
-Pros:
-
-  * No potential confusion between **reverse()** and **reversed()** on **Array.prototype**.
-  * Good parallel between **Array.prototype.reverse** and **%IteratorPrototype%.reverse**.
-    The story is that `reverse` should return a similar type of thing as the `this` context.
-
-Cons:
-
-  * No nice way to get a reverse iterator from an Array directly. Must call
-    **Array.prototype[Symbol.reverseIterator]** to get one.
-
-
-#### `reversed()` marks the interface
-
-In this alternative, we get rid of **Symbol.reverseIterator** and directly use
-the existence of **reversed** to mark the *ReverseIterable* interface.
-
-Pros:
-
-  * Fewer pieces to implement for a useful *ReverseIterable* implementation.
-  * If **reversed** exists, you can call it without TypeError.
-
-Cons:
-
-  * **reversed** could be too common of a property name in user-land to make this
-    distinction in spec.
-  * If you call **reversed()** on a non ReverseIterable, you get a less clear
-    exception message concerning calling undefined as a function.
-  * A user-land object may wish to implement **reversed** such that it uses the
-    buffering technique explained as explicitly not proposed in FAQ, however
-    this should not cause it to be identified as a *ReverseIterable* as proposed.
 
 
 
@@ -146,7 +101,7 @@ Cons:
 
 | Specification Name | [[Description]] | Value and Purpose |
 | ------------------ | --------------- | ----------------- |
-| @@reverseIterator  | "Symbol.reverseIterator" | A method that returns the default reverse iterator for an object. Called by the **reversed** method of Iterators and Collections. |
+| @@reverseIterator  | "Symbol.reverseIterator" | A method that returns the default reverse iterator for an object. Called by the **reverse** method of Iterators. |
 
 
 
@@ -168,7 +123,7 @@ also implements the *Iterable* interface.
 
 ## 25.1.2  The %IteratorPrototype% Object
 
-#### 25.1.2.1.X  %IteratorPrototype%.reversed ( )
+#### 25.1.2.1.X  %IteratorPrototype%.reverse ( )
 > This property is new
 
 The following steps are taken:
@@ -195,18 +150,12 @@ This property has the attributes { [[Writable]]: **false**, [[Enumerable]]: **fa
 
 ## 22.1.3  Properties of the Array Prototype Object
 
-### 22.1.3.X  Array.prototype.reversed ( )
+### 22.1.3.X  Array.prototype \[ @@reverseIterator ] ( )
 > This property is new
 
   1. Let *O* be the result of calling ToObject with the **this** value as its argument.
   2. ReturnIfAbrupt(*O*).
   3. Return CreateArrayReverseIterator(*O*, **"value"**).
-
-### 22.1.3.X  Array.prototype \[ @@reverseIterator ] ( )
-> This property is new
-
-The initial value of the @@reverseIterator property is the same function object
-as the initial value of the **Array.prototype.reversed** property.
 
 
 
@@ -234,8 +183,7 @@ as the initial value of the **Array.prototype.reversed** property.
 An Array Reverse Iterator is an object, that represents a specific reverse
 iteration over some specific Array instance object. There is not a named
 constructor for Array Reverse Iterator objects. Instead, Array Reverse
-Iterator objects are created by calling **reversed** on Array objects or Array
-Iterator objects.
+Iterator objects are created by calling **reverse** on Array Iterator objects.
 
 
 ### 22.1.X.1  CreateArrayReverseIterator Abstract Operation
@@ -356,15 +304,15 @@ following table.
   3. Set *iterator’s* [[ListIteratorNextIndex]] internal slot to 0.
   4. Let *next* be a new built-in function object as defined in ListIterator **next** (7.4.9.1).
   5. Set *iterator’s* [[IteratorNext]] internal slot to *next*.
-  6. Let *reversed* be a new built-in function object as defined in ListIterator **reversed**.
-  7. Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]: *reversed*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).
+  6. Let *reverse* be a new built-in function object as defined in ListIterator **reverse**.
+  7. Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]: *reverse*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).
   8. Let *status* be CreateDataProperty(iterator, **"next"**, *next*).
   9. Return *iterator*.
 
-#### 7.4.8.X  ListIterator reversed ( )
+#### 7.4.8.X  ListIterator reverse ( )
 > This method is new
 
-The ListIterator **reversed** method is a standard built-in function object (clause 17)
+The ListIterator **reverse** method is a standard built-in function object (clause 17)
 that performs the following steps:
 
   1. Let *O* be the **this** value.
@@ -386,8 +334,8 @@ list in descending (reversed) order. It performs the following steps:
   4. Set *iterator’s* [[ListReverseIteratorNextIndex]] internal slot to *len*-1.
   5. Let *next* be a new built-in function object as defined in ListReverseIterator **next**.
   6. Set *iterator’s* [[IteratorNext]] internal slot to *next*.
-  7. Let *reversed* be a new built-in function object as defined in ListReverseIterator **reversed**.
-  8. Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]: *reversed*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).
+  7. Let *reverse* be a new built-in function object as defined in ListReverseIterator **reverse**.
+  8. Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]: *reverse*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).
   9. Let *status* be CreateDataProperty(*iterator*, **"next"**, *next*).
   10. Return *iterator*.
 
@@ -410,9 +358,9 @@ The ListReverseIterator **next** method is a standard built-in function object (
 
 NOTE  A ListReverseIterator **next** method will throw an exception if applied to any object other than the one with which it was originally associated.
 
-#### 7.4.X.2  ListReverseIterator reversed ( )
+#### 7.4.X.2  ListReverseIterator reverse ( )
 
-The ListReverseIterator **reversed** method is a standard built-in function object (clause 17)
+The ListReverseIterator **reverse** method is a standard built-in function object (clause 17)
 that performs the following steps:
 
   1. Let *O* be the **this** value.
@@ -433,15 +381,15 @@ that performs the following steps:
   7. Let *usingReverseIterator1* be GetMethod(*iterator1*, @@reverseIterator).
   8. Let *usingReverseIterator2* be GetMethod(*iterator2*, @@reverseIterator).
   9. If *usingReverseIterator1* is not **undefined** and *usingReverseIterator2* is not **undefined**.
-      * a. Let *reversed* be a new built-in function object as defined in CompoundIterator **reversed**.
-      * b. Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]: *reversed*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).
+      * a. Let *reverse* be a new built-in function object as defined in CompoundIterator **reverse**.
+      * b. Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]: *reverse*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).
   10. Let *status* be CreateDataProperty(iterator, **"next"**, *next*).
   11. Return *iterator*.
 
-#### 7.4.9.X  CompoundIterator reversed ( )
+#### 7.4.9.X  CompoundIterator reverse ( )
 > This method is new
 
-The CompoundIterator **reversed** method is a standard built-in function object (clause 17)
+The CompoundIterator **reverse** method is a standard built-in function object (clause 17)
 that performs the following steps:
 
   1. Let *O* be the **this** value.

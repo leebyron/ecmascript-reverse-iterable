@@ -3,9 +3,9 @@ polyfill();
 
 
 (function () {
-  // Array can produce a reverse iterator with reversed()
+  // Array can produce a default reverse iterator with [Symbol.reverseIterator]();
   var array = ['A','B','C'];
-  var rev = array.reversed();
+  var rev = array[Symbol.reverseIterator]();
   console.log(rev.next()); // "C"
   console.log(rev.next()); // "B"
   console.log(rev.next()); // "A"
@@ -15,9 +15,9 @@ polyfill();
 
 
 (function () {
-  // Array iterator can produce a reverse iterator of the same kind with reversed()
+  // Array iterator can produce a reverse iterator of the same kind with reverse()
   var array = ['A','B','C'];
-  var revEntries = array.entries().reversed();
+  var revEntries = array.entries().reverse();
   console.log(revEntries.next()); // [2, "C"]
   console.log(revEntries.next()); // [1, "B"]
   console.log(revEntries.next()); // [0, "A"]
@@ -90,7 +90,7 @@ polyfill();
   // Illustrate that a reverse-iterator can be mapped, and the result of that
   // can be reversed itself. A reverse-iterator can be reversed yet again.
   // This simply sets up the iterator, no buffering occurs.
-  var rev = array.reversed().map(function (l) { return l + l; }).reversed().reversed();
+  var rev = array.values().reverse().map(function (l) { return l + l; }).reverse().reverse();
   console.log(rev);
   console.log(rev.next()); // "CC"
   console.log(rev.next()); // "BB"
@@ -313,7 +313,7 @@ function polyfill() {
   // -- This property is new, added after 25.1.2.1.1
 
 
-  IteratorPrototype.reversed = function() {
+  IteratorPrototype.reverse = function() {
     // 1. Let *O* be the result of calling ToObject with the **this** value as its argument.
     // 2. ReturnIfAbrupt(*O*).
     var O = Object(this);
@@ -344,8 +344,8 @@ function polyfill() {
   // -- This property is new, added after 22.1.3.30
 
 
-  // # Array.prototype.reversed ( )
-  Array.prototype.reversed = function () {
+  // # Array.prototype [ @@reverseIterator ] ( )
+  Array.prototype[Symbol.reverseIterator] = function () {
     // 1. Let O be the result of calling ToObject with the this value as its argument.
     // 2. ReturnIfAbrupt(O).
     var O = Object(this);
@@ -353,10 +353,6 @@ function polyfill() {
     // 3. Return CreateArrayReverseIterator(O, "value").
     return CreateArrayReverseIterator(O, 'value');
   };
-
-
-  // # Array.prototype [ @@reverseIterator ] ( )
-  Array.prototype[Symbol.reverseIterator] = Array.prototype.reversed;
 
 
   // -- These two properties are added to ArrayIteratorPrototype, 22.1.5.2
