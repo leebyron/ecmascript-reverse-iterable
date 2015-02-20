@@ -298,16 +298,16 @@ following table.
 ## 7.4  Operations on Iterator Objects
 
 ### 7.4.8  CreateListIterator ( list )
-> This existing abstract operation has 2 new steps added: 6 and 7.
+> This existing abstract operation has 2 new steps added: 7 and 8.
 
   1. Let *iterator* be ObjectCreate(%IteratorPrototype%, ([[IteratorNext]], [[IteratedList]], [[ListIteratorNextIndex]])).
   2. Set *iterator’s* [[IteratedList]] internal slot to *list*.
   3. Set *iterator’s* [[ListIteratorNextIndex]] internal slot to 0.
-  4. Let *next* be a new built-in function object as defined in ListIterator **next** (7.4.9.1).
+  4. Let *next* be a new built-in function object as defined in ListIterator **next** (7.4.8.1).
   5. Set *iterator’s* [[IteratorNext]] internal slot to *next*.
-  6. <ins>Let *reverse* be a new built-in function object as defined in ListIterator **reverse**.</ins>
-  7. <ins>Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]: *reverse*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).</ins>
-  8. Let *status* be CreateDataProperty(iterator, **"next"**, *next*).
+  6. Perform CreateMethodProperty(*iterator*, **"next"**, *next*).
+  7. <ins>Let *reverse* be the built-in function object ListIterator **reverse**.</ins>
+  8. <ins>Perform CreateMethodProperty(*iterator*, @@reverseIterator, *reverse*).</ins>
   9. Return *iterator*.
 
 #### 7.4.8.X  ListIterator reverse ( )
@@ -335,9 +335,9 @@ list in descending (reversed) order. It performs the following steps:
   4. Set *iterator’s* [[ListReverseIteratorNextIndex]] internal slot to *len*-1.
   5. Let *next* be a new built-in function object as defined in ListReverseIterator **next**.
   6. Set *iterator’s* [[IteratorNext]] internal slot to *next*.
-  7. Let *reverse* be a new built-in function object as defined in ListReverseIterator **reverse**.
-  8. Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]: *reverse*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).
-  9. Let *status* be CreateDataProperty(*iterator*, **"next"**, *next*).
+  7. Perform CreateMethodProperty(*iterator*, **"next"**, *next*).
+  8. Let *reverse* be the built-in function object ListReverseIterator **reverse**.
+  9. Perform CreateMethodProperty(*iterator*, @@reverseIterator, *reverse*).
   10. Return *iterator*.
 
 #### 7.4.X.1  ListReverseIterator next ( )
@@ -371,7 +371,7 @@ that performs the following steps:
 
 
 ### 7.4.9  CreateCompoundIterator ( iterator1, iterator2 )
-> This existing abstract operation has had 3 new steps added: 7, 8, and 9.
+> This existing abstract operation has had 3 new steps added: 8, 9, and 10.
 
   1. Let *iterator* be ObjectCreate(%IteratorPrototype%, ([[Iterator1]], [[Iterator2]], [[State]], [[IteratorNext]])).
   2. Set *iterator’s* [[Iterator1]] internal slot to *iterator1*.
@@ -379,12 +379,12 @@ that performs the following steps:
   4. Set *iterator’s* [[State]] internal slot to 1.
   5. Let *next* be a new built-in function object as defined in CompoundIterator **next** (7.4.10.1).
   6. Set *iterator’s* [[IteratorNext]] internal slot to *next*.
-  7. <ins>Let *usingReverseIterator1* be GetMethod(*iterator1*, @@reverseIterator).</ins>
-  8. <ins>Let *usingReverseIterator2* be GetMethod(*iterator2*, @@reverseIterator).</ins>
-  9. <ins>If *usingReverseIterator1* is not **undefined** and *usingReverseIterator2* is not **undefined**.</ins>
-      * a. <ins>Let *reverse* be a new built-in function object as defined in CompoundIterator **reverse**.</ins>
-      * b. <ins>Perform DefinePropertyOrThrow(*iterator*, @@reverseIterator, PropertyDescriptor {[[Value]]: *reverse*, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true**}).</ins>
-  10. Let *status* be CreateDataProperty(iterator, **"next"**, *next*).
+  7. Perform CreateMethodProperty(*iterator*, **"next"**, *next*).
+  8. <ins>Let *usingReverseIterator1* be GetMethod(*iterator1*, @@reverseIterator).</ins>
+  9. <ins>Let *usingReverseIterator2* be GetMethod(*iterator2*, @@reverseIterator).</ins>
+  10. <ins>If *usingReverseIterator1* is not **undefined** and *usingReverseIterator2* is not **undefined**.</ins>
+      * a. <ins>Let *reverse* be the built-in function object CompoundIterator **reverse**.</ins>
+      * b. <ins>Perform CreateMethodProperty(*iterator*, @@reverseIterator, *reverse*).</ins>
   11. Return *iterator*.
 
 #### 7.4.9.X  CompoundIterator reverse ( )
