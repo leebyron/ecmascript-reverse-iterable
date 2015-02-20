@@ -113,7 +113,7 @@ try {
 An alternative to this could be starting the partially completed reversed
 iterator at the same position:
 
-```
+```js
 var array = ["A", "B", "C"];
 var iterator = array.values();
 console.log(iterator.next().value); // "A"
