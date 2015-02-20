@@ -273,7 +273,7 @@ function polyfill() {
     var O = this;
 
     // 2. If Type(O) is not Object, throw a TypeError exception.
-    if (typeof O !== 'object') {
+    if (Object(O) !== O) {
       throw new TypeError();
     }
 
@@ -506,7 +506,7 @@ function polyfill() {
     var O = this;
 
     // 2. If Type(O) is not Object, throw a TypeError exception.
-    if (typeof O !== 'object') {
+    if (Object(O) !== O) {
       throw new TypeError();
     }
 
@@ -573,7 +573,7 @@ function polyfill() {
     var O = this;
 
     // 2. If Type(O) is not Object, throw a TypeError exception.
-    if (typeof O !== 'object') {
+    if (Object(O) !== O) {
       throw new TypeError();
     }
 
