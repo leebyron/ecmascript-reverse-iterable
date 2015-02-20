@@ -61,8 +61,7 @@ iterable and use that to it's advantage.
 
 ## FAQ
 
-**What happens if `reverse()` is called on something not easily reversed, like
-a Generator function?**
+##### What happens if `reverse()` is called on something not easily reversed, like a Generator function?
 
 This proposal suggests one-way iterables remain one-way. Objects which implement
 *Iterable* do not also have to implement *ReverseIterable*. There is no buffering
@@ -93,6 +92,47 @@ try {
 }
 ```
 
+##### What happens if `reverse()` is called after an iterator has already been partially iterated?
+
+This proposal suggests that such a sequence of operations is not allowed. When
+`[Symbol.reverseIterator]()` is called on an ArrayIterator or ListIterator, it
+will first check that iteration has not already begun otherwise throw a
+TypeError with a useful message:
+
+```js
+var iterator = array.values();
+iterator.next();
+
+try {
+  var reverseIterator = iterator.reverse();
+} catch (e) {
+  assert(e.message === "Cannot reverse once iteration has begun.");
+}
+```
+
+An alternative to this could be starting the partially completed reversed
+iterator at the same position:
+
+```
+var array = ["A", "B", "C"];
+var iterator = array.values();
+console.log(iterator.next().value); // "A"
+console.log(iterator.next().value); // "B"
+var reverseIterator = iterator.reverse();
+console.log(reverseIterator.next().value); // "A"
+console.log(reverseIterator.next().value); // undefined
+```
+
+There are some real caveats to this alternative approach:
+
+ * The behavioral differences between reversing fresh iterators and partially
+   iterated iterators could be confusing.
+ * This requires maintaing a small amount of additional state and providing that
+   state to the `[Symbol.reverseIterator]` method in a standardized way.
+ * Completed iterators would require maintaining their state in case they are
+   reversed which could make memory leaks easier to introduce to a program.
+
+Because of these caveats, this alternative is not being proposed.
 
 
 # Additions to Spec
