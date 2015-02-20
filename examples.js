@@ -121,6 +121,16 @@ function polyfill() {
     return typeof argument === 'function';
   }
 
+  // 7.3.5
+  function CreateMethodProperty(O, P, V) {
+    return Object.defineProperty(O, P, {
+      value: V,
+      writable: true,
+      enumerable: false,
+      configurable: true
+    });
+  }
+
   // 7.3.7
   function GetMethod(O, P) {
     // 1. Assert: Type(O) is Object.
@@ -195,34 +205,34 @@ function polyfill() {
   };
 
   // 22.1.3.4
-  Array.prototype.entries = function () {
+  CreateMethodProperty(Array.prototype, 'entries', function () {
     // 1. Let O be the result of calling ToObject with the this value as its argument.
     // 2. ReturnIfAbrupt(O).
     var O = Object(this);
 
     // 3. Return CreateArrayIterator(O, "key+value").
     return CreateArrayIterator(O, 'key+value');
-  };
+  });
 
   // 22.1.3.13
-  Array.prototype.keys = function () {
+  CreateMethodProperty(Array.prototype, 'keys', function () {
     // 1. Let O be the result of calling ToObject with the this value as its argument.
     // 2. ReturnIfAbrupt(O).
     var O = Object(this);
 
     // 3. Return CreateArrayIterator(O, "key").
     return CreateArrayIterator(O, 'key');
-  };
+  });
 
   // 22.1.3.29
-  Array.prototype.values = function () {
+  CreateMethodProperty(Array.prototype, 'values', function () {
     // 1. Let O be the result of calling ToObject with the this value as its argument.
     // 2. ReturnIfAbrupt(O).
     var O = Object(this);
 
     // 3. Return CreateArrayIterator(O, "value").
     return CreateArrayIterator(O, 'value');
-  };
+  });
 
   // 22.1.5.1
   function CreateArrayIterator(array, kind) {
@@ -237,7 +247,7 @@ function polyfill() {
   var ArrayIteratorPrototype = Object.create(IteratorPrototype);
 
   // 22.1.5.2.1
-  ArrayIteratorPrototype.next = function() {
+  CreateMethodProperty(ArrayIteratorPrototype, 'next', function() {
     // 1. Let O be the this value.
     var O = this;
 
@@ -307,7 +317,7 @@ function polyfill() {
 
     // 18. Return CreateIterResultObject(result, false).
     return CreateIterResultObject(result, false);
-  };
+  });
 
 
 
@@ -335,7 +345,7 @@ function polyfill() {
   // -- This property is new, added after 25.1.2.1.1
 
 
-  IteratorPrototype.reverse = function() {
+  CreateMethodProperty(IteratorPrototype, 'reverse', function() {
     // 1. Let *O* be the result of calling ToObject with the **this** value as its argument.
     // 2. ReturnIfAbrupt(*O*).
     var O = Object(this);
@@ -353,7 +363,7 @@ function polyfill() {
 
     // 6. return *iterator*.
     return iterator;
-  };
+  });
 
 
   // -- This property is new, added after 19.4.2.5
@@ -367,21 +377,21 @@ function polyfill() {
 
 
   // # Array.prototype [ @@reverseIterator ] ( )
-  Array.prototype[Symbol.reverseIterator] = function () {
+  CreateMethodProperty(Array.prototype, Symbol.reverseIterator, function () {
     // 1. Let O be the result of calling ToObject with the this value as its argument.
     // 2. ReturnIfAbrupt(O).
     var O = Object(this);
 
     // 3. Return CreateArrayReverseIterator(O, "value").
     return CreateArrayReverseIterator(O, 'value');
-  };
+  });
 
 
   // -- These two properties are added to ArrayIteratorPrototype, 22.1.5.2
 
 
   // # ArrayIteratorPrototype [ @@reverseIterator ] ( )
-  ArrayIteratorPrototype[Symbol.reverseIterator] = function () {
+  CreateMethodProperty(ArrayIteratorPrototype, Symbol.reverseIterator, function () {
     // 1. Let *O* be the **this** value.
     var O = this;
 
@@ -408,7 +418,7 @@ function polyfill() {
 
     // 8. Return CreateArrayReverseIterator(*a*, *itemKind*).
     return CreateArrayReverseIterator(a, itemKind);
-  };
+  });
 
 
 
@@ -466,7 +476,7 @@ function polyfill() {
 
 
   // # %ArrayReverseIteratorPrototype%.next ( )
-  ArrayReverseIteratorPrototype.next = function () {
+  CreateMethodProperty(ArrayReverseIteratorPrototype, 'next', function () {
 
     // 1. Let O be the this value.
     var O = this;
@@ -530,11 +540,11 @@ function polyfill() {
 
     // 16. Return CreateIterResultObject(result, false).
     return CreateIterResultObject(result, false);
-  };
+  });
 
 
   // # ArrayReverseIteratorPrototype [ @@reverseIterator ] ( )
-  ArrayReverseIteratorPrototype[Symbol.reverseIterator] = function () {
+  CreateMethodProperty(ArrayReverseIteratorPrototype, Symbol.reverseIterator, function () {
     // 1. Let *O* be the **this** value.
     var O = this;
 
@@ -569,7 +579,7 @@ function polyfill() {
 
     // 10. Return CreateArrayIterator(*a*, *itemKind*).
     return CreateArrayIterator(a, itemKind);
-  };
+  });
 
 
 
