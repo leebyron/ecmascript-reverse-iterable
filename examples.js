@@ -38,7 +38,15 @@ polyfill();
   };
 
   function CreateMappedIterator(originalIterator, mapper, context) {
-    var iterator = Object.create(IteratorPrototype);
+    // ObjectCreate(%IteratorPrototype%, ([[[OriginalIterator]], [[MappingFunction]], [[MappingContext]]]))
+    var iterator = Object.create(
+      IteratorPrototype,
+      {
+        '[[OriginalIterator]]': { writable: true, configurable: false, enumerable: false },
+        '[[MappingFunction]]': { writable: true, configurable: false, enumerable: false },
+        '[[MappingContext]]': { writable: true, configurable: false, enumerable: false },
+      }
+    );
     iterator['[[OriginalIterator]]'] = originalIterator;
     iterator['[[MappingFunction]]'] = mapper;
     iterator['[[MappingContext]]'] = context;
@@ -91,13 +99,11 @@ polyfill();
   // can be reversed itself. A reverse-iterator can be reversed yet again.
   // This simply sets up the iterator, no buffering occurs.
   var rev = array.values().reverse().map(function (l) { return l + l; }).reverse().reverse();
-  console.log(rev);
   console.log(rev.next()); // "CC"
   console.log(rev.next()); // "BB"
   console.log(rev.next()); // "AA"
   console.log(rev.next()); // undefined
   console.log(rev.next()); // undefined
-  console.log(rev);
 })();
 
 
@@ -188,6 +194,18 @@ function polyfill() {
     return { value: value, done: done };
   }
 
+  // 9.1.13
+  function ObjectCreate(proto, internalSlotsList) {
+    var properties = {};
+    if (internalSlotsList) {
+      for (var ii = 0; ii < internalSlotsList.length; ii++) {
+        var name = internalSlotsList[ii];
+        properties[name] = { writable: true, configurable: false, enumerable: false };
+      }
+    }
+    return Object.create(proto, properties);
+  }
+
   // 19.4.1
   /* global */ Symbol = function (k) {
     return k;
@@ -236,7 +254,10 @@ function polyfill() {
 
   // 22.1.5.1
   function CreateArrayIterator(array, kind) {
-    var iterator = Object.create(ArrayIteratorPrototype);
+    var iterator = ObjectCreate(
+      ArrayIteratorPrototype,
+      ['[[IteratedObject]]', '[[ArrayIteratorNextIndex]]', '[[ArrayIterationKind]]']
+    );
     iterator['[[IteratedObject]]'] = array;
     iterator['[[ArrayIteratorNextIndex]]'] = 0;
     iterator['[[ArrayIterationKind]]'] = kind;
@@ -244,7 +265,7 @@ function polyfill() {
   }
 
   // 22.1.5.2
-  var ArrayIteratorPrototype = Object.create(IteratorPrototype);
+  var ArrayIteratorPrototype = ObjectCreate(IteratorPrototype);
 
   // 22.1.5.2.1
   CreateMethodProperty(ArrayIteratorPrototype, 'next', function() {
@@ -441,7 +462,10 @@ function polyfill() {
     }
 
     // 2. Let *iterator* be ObjectCreate(%ArrayIteratorPrototype%, ([[IteratedObject]], [[ArrayReverseIteratorNextIndex]], [[ArrayIterationKind]])).
-    var iterator = Object.create(ArrayReverseIteratorPrototype);
+    var iterator = ObjectCreate(
+      ArrayReverseIteratorPrototype,
+      ['[[IteratedObject]]', '[[ArrayReverseIteratorNextIndex]]', '[[ArrayIterationKind]]']
+    );
 
     // 3. Set *iterator’s* [[IteratedObject]] internal slot to *array*.
     iterator['[[IteratedObject]]'] = array;
@@ -472,7 +496,7 @@ function polyfill() {
   // [[Prototype]] internal slot is the %IteratorPrototype% intrinsic object
   // (25.1.2). In addition, %ArrayReverseIteratorPrototype% has the following
   //  properties:
-  var ArrayReverseIteratorPrototype = Object.create(IteratorPrototype);
+  var ArrayReverseIteratorPrototype = ObjectCreate(IteratorPrototype);
 
 
   // # %ArrayReverseIteratorPrototype%.next ( )
