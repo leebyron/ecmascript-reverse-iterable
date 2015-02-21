@@ -134,6 +134,9 @@ CreateMethodProperty(Array.prototype, 'values', function () {
   return CreateArrayIterator(O, 'value');
 });
 
+// 22.1.3.30
+CreateMethodProperty(Array.prototype, Symbol.iterator, Array.prototype.values);
+
 // 22.1.5.1
 global.CreateArrayIterator = function CreateArrayIterator(array, kind) {
   var iterator = ObjectCreate(
