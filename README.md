@@ -435,12 +435,14 @@ that performs the following steps:
 
   1. Let *O* be the **this** value.
   2. If *O* does not have [[Iterator1]] and [[Iterator2]] internal slots, then throw a **TypeError** exception.
-  3. Let *iterator1* be the value of the [[Iterator1] internal slot of *O*.
-  4. Let *iterator2* be the value of the [[Iterator2] internal slot of *O*.
-  5. Let *usingReverseIterator1* be GetMethod(*iterator1*, @@reverseIterator).
-  6. If *usingReverseIterator1* is **undefined**, throw a **TypeError** exception.
-  7. Let *reverseIterator1* be GetIterator(*O*, *usingReverseIterator1*).
-  8. Let *usingReverseIterator2* be GetMethod(*iterator2*, @@reverseIterator).
-  9. If *usingReverseIterator2* is **undefined**, throw a **TypeError** exception.
-  10. Let *reverseIterator2* be GetIterator(*O*, *usingReverseIterator2*).
-  11. Return CreateCompoundIterator(reverseIterator2, reverseIterator1).
+  3. Let *state* be the value of the [[State]] internal slot of *O*.
+  4. If *state* is not 0, throw a **TypeError* exception.
+  5. Let *iterator1* be the value of the [[Iterator1] internal slot of *O*.
+  6. Let *iterator2* be the value of the [[Iterator2] internal slot of *O*.
+  7. Let *usingReverseIterator1* be GetMethod(*iterator1*, @@reverseIterator).
+  8. If *usingReverseIterator1* is **undefined**, throw a **TypeError** exception.
+  9. Let *reverseIterator1* be GetIterator(*O*, *usingReverseIterator1*).
+  10. Let *usingReverseIterator2* be GetMethod(*iterator2*, @@reverseIterator).
+  11. If *usingReverseIterator2* is **undefined**, throw a **TypeError** exception.
+  12. Let *reverseIterator2* be GetIterator(*O*, *usingReverseIterator2*).
+  13. Return CreateCompoundIterator(reverseIterator2, reverseIterator1).
