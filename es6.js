@@ -1,3 +1,5 @@
+"use strict";
+
 // The following is all currently specced behavior in ES2015 (ES6).
 // It is all either directly referred to in the proposal, or is contextually
 // relevant to the proposal in order to produce meaningful examples.

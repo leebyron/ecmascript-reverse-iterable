@@ -1,3 +1,5 @@
+"use strict";
+
 //////////////////////////////////////////////////////////////////////////////
 //                                                                          //
 //     -- The following are proposed additions to a future ECMA spec. --    //
