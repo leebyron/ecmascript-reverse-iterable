@@ -436,7 +436,7 @@ that performs the following steps:
   1. Let *O* be the **this** value.
   2. If *O* does not have [[Iterator1]] and [[Iterator2]] internal slots, then throw a **TypeError** exception.
   3. Let *state* be the value of the [[State]] internal slot of *O*.
-  4. If *state* is not 0, throw a **TypeError* exception.
+  4. If *state* is not 1, throw a **TypeError* exception.
   5. Let *iterator1* be the value of the [[Iterator1] internal slot of *O*.
   6. Let *iterator2* be the value of the [[Iterator2] internal slot of *O*.
   7. Let *usingReverseIterator1* be GetMethod(*iterator1*, @@reverseIterator).
