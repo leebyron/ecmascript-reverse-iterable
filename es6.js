@@ -4,6 +4,11 @@
 // It is all either directly referred to in the proposal, or is contextually
 // relevant to the proposal in order to produce meaningful examples.
 
+// 6.2.2.1 NormalCompletion
+global.NormalCompletion = function NormalCompletion(argument) {
+  return { type: 'normal', value: argument, target: undefined };
+};
+
 // 7.1.2
 global.ToBoolean = function ToBoolean(argument) {
   return !!argument;
