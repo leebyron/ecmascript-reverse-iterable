@@ -1,5 +1,7 @@
 "use strict";
 
+require('./es6');
+
 //////////////////////////////////////////////////////////////////////////////
 //                                                                          //
 //     -- The following are proposed additions to a future ECMA spec. --    //

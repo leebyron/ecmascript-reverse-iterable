@@ -1,6 +1,5 @@
 "use strict";
 
-require('./es6');
 require('./polyfill-spec');
 
 (function () {
