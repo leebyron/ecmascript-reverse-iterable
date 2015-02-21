@@ -187,6 +187,7 @@ global.Symbol = function Symbol(k) {
 
 // 19.4.2.5
 Symbol.iterator = Symbol('@@iterator');
+Symbol.isConcatSpreadable = Symbol('@@isConcatSpreadable');
 
 // 25.1.2
 global.IteratorPrototype = {};
@@ -194,6 +195,18 @@ global.IteratorPrototype = {};
 // 25.1.2.1.1
 IteratorPrototype[Symbol.iterator] = function () {
   return this;
+};
+
+// 22.1.3.1.1
+global.IsConcatSpreadable = function IsConcatSpreadable(O) {
+  if (Object(O) !== O) {
+    return false;
+  }
+  var spreadable = O[Symbol.isConcatSpreadable];
+  if (spreadable !== undefined) {
+    return ToBoolean(spreadable);
+  }
+  return Array.isArray(O);
 };
 
 // 22.1.3.4
