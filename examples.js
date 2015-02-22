@@ -27,61 +27,42 @@ require('./polyfill-spec');
 
 
 (function () {
-  // Illustrate example of future possible proposal which makes use
-  // of GetMethod(O, @@reverseIterable) to determine if it itself should
-  // implement ReverseIterable.
+  // Illustrate example of a user-land `map` function which checks for
+  // @@reverseIterable to determine if it itself should implement ReverseIterable.
 
-  var IteratorPrototype = Object.getPrototypeOf(Object.getPrototypeOf([][Symbol.reverseIterator]()));
-  IteratorPrototype.map = function(mapper, context) {
-    var O = Object(this);
-    return CreateMappedIterator(O, mapper, context);
-  };
+  var IteratorPrototype = Object.getPrototypeOf(Object.getPrototypeOf([][Symbol.iterator]()));
 
-  function CreateMappedIterator(originalIterator, mapper, context) {
-    var iterator = ObjectCreate(
-      IteratorPrototype,
-      ['[[OriginalIterator]]', '[[MappingFunction]]', '[[MappingContext]]']
-    );
-    iterator['[[OriginalIterator]]'] = originalIterator;
-    iterator['[[MappingFunction]]'] = mapper;
-    iterator['[[MappingContext]]'] = context;
-    iterator.next = MappedIteratorNext;
-    var reverseIterable = originalIterator[Symbol.reverseIterator];
-    if (reverseIterable !== undefined) {
-      iterator[Symbol.reverseIterator] = MappedIteratorReversed;
+  function mapIterator(originalIterator, mapper, context) {
+    var iterator = Object.create(IteratorPrototype, {
+      originalIterator: { value: originalIterator, writable: true },
+      mapper: { value: mapper, writable: true },
+      context: { value: context, writable: true },
+      next: { value: MapIteratorNext }
+    });
+    var hasReverseIterable = originalIterator[Symbol.reverseIterator];
+    if (hasReverseIterable) {
+      iterator[Symbol.reverseIterator] = MapIteratorReversed;
     }
     return iterator;
   }
 
-  function MappedIteratorNext() {
-    var O = Object(this);
-    var iterator = O['[[OriginalIterator]]'];
-    if (iterator === undefined) {
-      return CreateIterResultObject(undefined, true);
+  function MapIteratorNext() {
+    var originalIterator = this.originalIterator;
+    if (originalIterator === undefined) {
+      return { value: undefined, done: true };
     }
-    var nextFn = iterator.next;
-    var result = nextFn.apply(iterator, arguments);
+    var result = originalIterator.next();
     if (result.done) {
-      O['[[OriginalIterator]]'] = undefined;
-      O['[[MappingFunction]]'] = undefined;
-      O['[[MappingContext]]'] = undefined;
+      this.originalIterator = undefined;
       return result;
     }
-    var mapper = O['[[MappingFunction]]'];
-    var context = O['[[MappingContext]]'];
-    var originalValue = result.value;
-    var value = mapper.call(context, originalValue);
-    return CreateIterResultObject(value, false);
+    return { value: this.mapper.call(this.context, result.value), done: false };
   }
 
-  function MappedIteratorReversed() {
-    var O = Object(this);
-    var iterator = O['[[OriginalIterator]]'];
-    var reverseIteratorMethod = iterator[Symbol.reverseIterator];
-    var reverseIterator = GetIterator(iterator, reverseIteratorMethod);
-    var mapper = O['[[MappingFunction]]'];
-    var context = O['[[MappingContext]]'];
-    return CreateMappedIterator(reverseIterator, mapper, context);
+  function MapIteratorReversed() {
+    var originalIterator = this.originalIterator;
+    var reverseIterator = originalIterator[Symbol.reverseIterator]();
+    return mapIterator(reverseIterator, this.mapper, this.context);
   }
 
 
@@ -90,7 +71,7 @@ require('./polyfill-spec');
   // Illustrate that a reverse-iterator can be mapped, and the result of that
   // can be reversed itself. A reverse-iterator can be reversed yet again.
   // This simply sets up the iterator, no buffering occurs.
-  var rev = array.values().reverse().map(function (l) { return l + l; }).reverse().reverse();
+  var rev = mapIterator(array.values().reverse(), function (l) { return l + l; }).reverse().reverse();
   console.log(rev.next()); // "CC"
   console.log(rev.next()); // "BB"
   console.log(rev.next()); // "AA"
