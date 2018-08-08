@@ -48,7 +48,6 @@ for (let v of a[Symbol.reverseIterator]()) {
 }
 ```
 
-
 This syntax has the benefit of not introducing new syntactical concepts but
 instead just adds a few function properties to iterator prototypes.
 
@@ -58,6 +57,7 @@ adding a function to the `Symbol.reverseIterator` property. Capturing this in an
 interface allows arbitrary code to detect that a particular object is reverse
 iterable and use that to it's advantage.
 
+Further examples and a working reference implemenation of a reverse-iterable map can be found here: [ReverseIterableMap](https://github.com/kleinfreund/reverse-iterable-map).
 
 ## FAQ
 
